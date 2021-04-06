@@ -138,8 +138,14 @@ extern "C" {
 		//define next round belongs to whom
 		Battleship_WhoRound who_round;
 
+		//make who is the first one
+		Battleship_PlayerType who_go_first;
+
+		//battleship health for both players
+		int array_health_player_battleship[6];
+		int array_health_ai_battleship[6];
 		
-		
+			
 	}Battleship_ThreadParameter;
 
 	//start the game
@@ -158,10 +164,10 @@ extern "C" {
 	void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ship array_ship, Battleship_ShipType ship_type);
 
 	//check who pick up the first round
-	Battleship_PlayerType fnc_select_who_starts_first(Battleship_ThreadParameter* thread_parameter);
+	Battleship_PlayerType fnc_select_who_starts_first();
 
 	//apply shot into board
-	bool fnc_check_shot(Battleship_ThreadParameter* thread_parameter);
+	bool fnc_check_shot(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_Rect hit_rect);
 
 	//check if we have a winner
 	int fnc_check_is_winner(Battleship_ThreadParameter* thread_parameter);
@@ -188,7 +194,10 @@ extern "C" {
 	void fnc_init_battleship_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
 
 	//ai drop a bomb to hit cells
-	void fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
+	Battleship_Rect fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
+
+	//sync battleship health
+	void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int array_health_player_battleship[6]);
 
 	//sync parameter data
 	void fnc_sync_data(Battleship_ThreadParameter* thread_parameter);

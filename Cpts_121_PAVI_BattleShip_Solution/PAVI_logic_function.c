@@ -438,15 +438,19 @@ void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_G
 	}
 }
 
-Battleship_PlayerType fnc_select_who_starts_first(Battleship_ThreadParameter* thread_parameter)
+Battleship_PlayerType fnc_select_who_starts_first()
 {
 	const Battleship_PlayerType type = rand() % 2;
 	return type;
 }
 
-bool fnc_check_shot(Battleship_ThreadParameter* thread_parameter)
+bool fnc_check_shot(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_Rect hit_rect)
 {
 	//return if it is a hit
+	if (cell[hit_rect.x][hit_rect.y].is_ship_placed == true)
+	{
+		return true;
+	}
 	return false;
 }
 
@@ -532,6 +536,10 @@ bool fnc_init_parameter_environment(Battleship_ThreadParameter* thread_parameter
 
 	//init close request
 	thread_parameter->battleship_num_close_requested = false;
+
+	//init ship health
+	thread_parameter->array_health_ai_battleship[0] = 0;
+	thread_parameter->array_health_player_battleship[0] = 0;
 	
 	return true;
 }
@@ -557,7 +565,7 @@ void fnc_init_battleship_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_
 	
 }
 
-void fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH])
+Battleship_Rect fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH])
 {
 	Battleship_Rect rect_hit = {0, 0};
 	bool is_already_hit = false;
@@ -575,7 +583,69 @@ void fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH
 	while (is_already_hit == true);
 
 	cell[rect_hit.x][rect_hit.y].is_Hit = true;
-	
+
+	//modify char as a x mark
+	cell[rect_hit.x][rect_hit.y].char_ship_type = 'X';
+
+	return rect_hit;	
+}
+
+void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int array_health_player_battleship[6])
+{
+	//init health
+	array_health_player_battleship[SHIP_TYPE_CARRIER] = GAME_BATTLESHIP_HEALTH_CARRIER;
+	array_health_player_battleship[SHIP_TYPE_BATTLESHIP] = GAME_BATTLESHIP_HEALTH_BATTLESHIP;
+	array_health_player_battleship[SHIP_TYPE_CRUISER] = GAME_BATTLESHIP_HEALTH_CRUISER;
+	array_health_player_battleship[SHIP_TYPE_SUBMARINE] = GAME_BATTLESHIP_HEALTH_SUBMARINE;
+	array_health_player_battleship[SHIP_TYPE_DESTROYER] = GAME_BATTLESHIP_HEALTH_DESTROYER;
+
+	int num_count = 0;
+
+	for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+	{
+		for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+		{
+			if (cell[i][j].is_ship_placed == true)
+			{
+				switch (cell[i][j].ship_type)
+				{
+				case SHIP_TYPE_INIT:
+					break;
+				case SHIP_TYPE_CARRIER:
+					array_health_player_battleship[SHIP_TYPE_CARRIER]--;
+					break;
+				case SHIP_TYPE_BATTLESHIP:
+					array_health_player_battleship[SHIP_TYPE_BATTLESHIP]--;
+					break;
+				case SHIP_TYPE_CRUISER:
+					array_health_player_battleship[SHIP_TYPE_CRUISER]--;
+					break;
+				case SHIP_TYPE_SUBMARINE:
+					array_health_player_battleship[SHIP_TYPE_SUBMARINE]--;
+					break;
+				case SHIP_TYPE_DESTROYER:
+					array_health_player_battleship[SHIP_TYPE_DESTROYER]--;
+					break;
+				default:
+					printf_s("unknown ship type!\n");		
+				}
+			}
+		}
+	}
+
+	//check winner condition
+	for (int i = 1; i < 6; ++i)
+	{
+		if (array_health_player_battleship[i] == 0)
+		{
+			num_count++;
+		}
+	}
+
+	if (num_count == 5)
+	{
+		array_health_player_battleship[0] = 1;
+	}	
 }
 
 void fnc_sync_data(Battleship_ThreadParameter* thread_parameter)
@@ -611,6 +681,65 @@ void mock_start_test_session()
 	fnc_ai_place_ship(mock_tp_parameter.cell_player);
 
 	mock_test_session_map(&mock_tp_parameter);
+
+	//decide who go first
+	mock_tp_parameter.who_go_first = fnc_select_who_starts_first();
+
+	//define 1 round var
+	int winner = -1;
+	Battleship_Rect rect_hit;
+	bool is_ai_hit = false;
+	bool is_Player_hit = false;
+
+	while (winner == -1)
+	{
+		//reset flag
+		is_ai_hit = false;
+		is_Player_hit = false;
+
+		
+		//player go first
+		if (mock_tp_parameter.who_go_first == player)
+		{
+			//hit will need return rect to judge if hit
+			rect_hit = fnc_ai_attack_cell(mock_tp_parameter.cell_ai);
+			is_Player_hit = fnc_check_shot(mock_tp_parameter.cell_ai, rect_hit);
+			if (is_Player_hit)
+			{
+				printf_s("\nIt is a player hit!");
+				fnc_update_battleship_health(mock_tp_parameter.cell_ai, mock_tp_parameter.array_health_ai_battleship);
+
+			}
+			else
+			{
+				printf_s("\nIt is a player miss!");
+			}			
+		}
+		else
+		{
+			//ai go first
+			rect_hit = fnc_ai_attack_cell(mock_tp_parameter.cell_player);
+			is_ai_hit = fnc_check_shot(mock_tp_parameter.cell_player, rect_hit);
+			if (is_ai_hit)
+			{
+				printf_s("\nIt is a ai hit!");
+				fnc_update_battleship_health(mock_tp_parameter.cell_player, mock_tp_parameter.array_health_player_battleship);
+
+			}
+			else
+			{
+				printf_s("\nIt is a ai miss!");
+			}
+		}
+		
+	}
+	
+	
+	
+
+	
+
+	
 
 	
 }
