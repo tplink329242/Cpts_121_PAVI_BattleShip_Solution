@@ -97,7 +97,7 @@ extern "C" {
 	typedef struct
 	{
 		Battleship_ShipType ship_type;
-		Battleship_Rect array_ship_location[5];
+		Battleship_Rect array_ship_location;
 		int health;
 		bool is_sunk;
 		Battleship_Direction direction;
@@ -133,7 +133,7 @@ extern "C" {
 		Battleship_Cell cell_ai[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH];
 
 		//game round record
-		Battleship_GameRound game_round_map[100];
+		//Battleship_GameRound game_round_map[100];
 
 		//define next round belongs to whom
 		Battleship_WhoRound who_round;
@@ -155,7 +155,7 @@ extern "C" {
 	Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int ship_type, Battleship_Direction ship_direction);
 	
 	//check who pick up the first round
-	void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ship array_ship[5], Battleship_ShipType ship_type);
+	void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ship array_ship, Battleship_ShipType ship_type);
 
 	//check who pick up the first round
 	Battleship_PlayerType fnc_select_who_starts_first(Battleship_ThreadParameter* thread_parameter);
@@ -187,6 +187,9 @@ extern "C" {
 	//init game cells
 	void fnc_init_battleship_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
 
+	//ai drop a bomb to hit cells
+	void fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
+
 	//sync parameter data
 	void fnc_sync_data(Battleship_ThreadParameter* thread_parameter);
 
@@ -195,6 +198,9 @@ extern "C" {
 
 	//start a new mock session
 	void mock_start_test_session();
+
+	//test session condition
+	void mock_test_session_map(Battleship_ThreadParameter* thread_parameter);
 	
 #ifdef __cplusplus
 }

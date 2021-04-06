@@ -57,15 +57,16 @@ bool fnc_ai_place_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]
 	int rect_x = 0;
 	int rect_y = 0;
 
-	Battleship_ship array_ship[5];
+	Battleship_ship array_ship[5] = {'0'};
 	
 	
 	for (int i = 1; i <= GAME_BATTLESHIP_MAX_GAME_SHIP_NUM; ++i)
 	{
 		ship_direction = rand() % 2;
 		array_ship[i - 1].direction = ship_direction;
-		array_ship[i - 1].array_ship_location[0] = fnc_get_available_random_place(cell, i, ship_direction);
-		fnc_update_cell_using_array_ship(cell, array_ship, i + 1);
+		array_ship[i - 1].ship_type = i;
+		array_ship[i - 1].array_ship_location = fnc_get_available_random_place(cell, i, ship_direction);
+		fnc_update_cell_using_array_ship(cell, array_ship[i - 1], i);
 	}	
 	
 	return true;
@@ -84,13 +85,13 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 	switch (ship_type)
 	{
 	case SHIP_TYPE_CARRIER:
-		if (ship_direction == horizontal)
+		if (ship_direction == vertical)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 				
-				rect.x = rand() % (9 - GAME_BATTLESHIP_HEALTH_CARRIER);
+				rect.x = rand() % (11 - GAME_BATTLESHIP_HEALTH_CARRIER);
 				rect.y = rand() % 9;
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_CARRIER; ++i)
@@ -102,17 +103,17 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					}
 				}
 				
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 			
 		}
-		if (ship_direction == vertical)
+		if (ship_direction == horizontal)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 				
 				rect.x = rand() % 9;
-				rect.y = rand() % (9 - GAME_BATTLESHIP_HEALTH_CARRIER);
+				rect.y = rand() % (11 - GAME_BATTLESHIP_HEALTH_CARRIER);
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_CARRIER; ++i)
 				{
@@ -122,20 +123,20 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 		
 		}
 
 		break;
 	case SHIP_TYPE_BATTLESHIP:
 
-		if (ship_direction == horizontal)
+		if (ship_direction == vertical)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
-				rect.x = rand() % (9 - GAME_BATTLESHIP_HEALTH_BATTLESHIP);
+				rect.x = rand() % (11 - GAME_BATTLESHIP_HEALTH_BATTLESHIP);
 				rect.y = rand() % 9;
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_BATTLESHIP; ++i)
@@ -143,44 +144,44 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					if (cell[rect.x + i][rect.y].is_ship_placed == true)
 					{
 						is_AlreadyHaveAShip = true;
-						break;
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
-		if (ship_direction == vertical)
+		if (ship_direction == horizontal)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
 				rect.x = rand() % 9;
-				rect.y = rand() % (9 - GAME_BATTLESHIP_HEALTH_BATTLESHIP);
+				rect.y = rand() % (11 - GAME_BATTLESHIP_HEALTH_BATTLESHIP);
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_BATTLESHIP; ++i)
 				{
 					if (cell[rect.x][rect.y + i].is_ship_placed == true)
 					{
 						is_AlreadyHaveAShip = true;
+						break;
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
 
 		break;
 	case SHIP_TYPE_CRUISER:
 
-		if (ship_direction == horizontal)
+		if (ship_direction == vertical)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
-				rect.x = rand() % (9 - GAME_BATTLESHIP_HEALTH_CRUISER);
+				rect.x = rand() % (11 - GAME_BATTLESHIP_HEALTH_CRUISER);
 				rect.y = rand() % 9;
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_CRUISER; ++i)
@@ -192,17 +193,17 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
-		if (ship_direction == vertical)
+		if (ship_direction == horizontal)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
 				rect.x = rand() % 9;
-				rect.y = rand() % (9 - GAME_BATTLESHIP_HEALTH_CRUISER);
+				rect.y = rand() % (11 - GAME_BATTLESHIP_HEALTH_CRUISER);
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_CRUISER; ++i)
 				{
@@ -212,20 +213,20 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
 
 		break;
 	case SHIP_TYPE_SUBMARINE:
 
-		if (ship_direction == horizontal)
+		if (ship_direction == vertical)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
-				rect.x = rand() % (9 - GAME_BATTLESHIP_HEALTH_SUBMARINE);
+				rect.x = rand() % (11 - GAME_BATTLESHIP_HEALTH_SUBMARINE);
 				rect.y = rand() % 9;
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_SUBMARINE; ++i)
@@ -237,17 +238,17 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
-		if (ship_direction == vertical)
+		if (ship_direction == horizontal)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
 				rect.x = rand() % 9;
-				rect.y = rand() % (9 - GAME_BATTLESHIP_HEALTH_SUBMARINE);
+				rect.y = rand() % (11 - GAME_BATTLESHIP_HEALTH_SUBMARINE);
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_SUBMARINE; ++i)
 				{
@@ -257,20 +258,20 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
 
 		break;
 	case SHIP_TYPE_DESTROYER:
 
-		if (ship_direction == horizontal)
+		if (ship_direction == vertical)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
-				rect.x = rand() % (9 - GAME_BATTLESHIP_HEALTH_DESTROYER);
+				rect.x = rand() % (11 - GAME_BATTLESHIP_HEALTH_DESTROYER);
 				rect.y = rand() % 9;
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_DESTROYER; ++i)
@@ -282,27 +283,28 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
-		if (ship_direction == vertical)
+		if (ship_direction == horizontal)
 		{
 			do
 			{
 				is_AlreadyHaveAShip = false;
 
 				rect.x = rand() % 9;
-				rect.y = rand() % (9 - GAME_BATTLESHIP_HEALTH_DESTROYER);
+				rect.y = rand() % (11 - GAME_BATTLESHIP_HEALTH_DESTROYER);
 
 				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_DESTROYER; ++i)
 				{
 					if (cell[rect.x][rect.y + i].is_ship_placed == true)
 					{
 						is_AlreadyHaveAShip = true;
+						break;
 					}
 				}
 
-			} while (is_AlreadyHaveAShip);
+			} while (is_AlreadyHaveAShip == true);
 
 		}
 		break;
@@ -312,7 +314,7 @@ Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLES
 	return rect;
 }
 
-void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ship array_ship[5], Battleship_ShipType ship_type)
+void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ship array_ship, Battleship_ShipType ship_type)
 {
 	int rect_x = 0;
 	int rect_y = 0;
@@ -323,18 +325,18 @@ void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_G
 	case SHIP_TYPE_CARRIER:
 		for (int j = 0; j < GAME_BATTLESHIP_HEALTH_CARRIER; ++j)
 		{
-			if (array_ship[0].direction == vertical)
+			if (array_ship.direction == horizontal)
 			{
-				rect_x = array_ship[0].array_ship_location->x;
-				rect_y = array_ship[0].array_ship_location->y + j;
+				rect_x = array_ship.array_ship_location.x;				
+				rect_y = array_ship.array_ship_location.y + j;
 				cell[rect_x][rect_y].char_ship_type = 'c';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_CARRIER;
 			}
-			if (array_ship[0].direction == horizontal)
+			if (array_ship.direction == vertical)
 			{
-				rect_x = array_ship[0].array_ship_location->x + j;
-				rect_y = array_ship[0].array_ship_location->y;
+				rect_x = array_ship.array_ship_location.x + j;
+				rect_y = array_ship.array_ship_location.y;
 				cell[rect_x][rect_y].char_ship_type = 'c';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_CARRIER;
@@ -344,18 +346,18 @@ void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_G
 	case SHIP_TYPE_BATTLESHIP:
 		for (int j = 0; j < GAME_BATTLESHIP_HEALTH_BATTLESHIP; ++j)
 		{
-			if (array_ship[1].direction == vertical)
+			if (array_ship.direction == horizontal)
 			{
-				rect_x = array_ship[1].array_ship_location->x;
-				rect_y = array_ship[1].array_ship_location->y + j;
+				rect_x = array_ship.array_ship_location.x;
+				rect_y = array_ship.array_ship_location.y + j;
 				cell[rect_x][rect_y].char_ship_type = 'b';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_BATTLESHIP;
 			}
-			if (array_ship[1].direction == horizontal)
+			if (array_ship.direction == vertical)
 			{
-				rect_x = array_ship[1].array_ship_location->x + j;
-				rect_y = array_ship[1].array_ship_location->y;
+				rect_x = array_ship.array_ship_location.x + j;
+				rect_y = array_ship.array_ship_location.y;
 				cell[rect_x][rect_y].char_ship_type = 'b';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_BATTLESHIP;
@@ -365,18 +367,18 @@ void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_G
 	case SHIP_TYPE_CRUISER:
 		for (int j = 0; j < GAME_BATTLESHIP_HEALTH_CRUISER; ++j)
 		{
-			if (array_ship[2].direction == vertical)
+			if (array_ship.direction == horizontal)
 			{
-				rect_x = array_ship[2].array_ship_location->x;
-				rect_y = array_ship[2].array_ship_location->y + j;
+				rect_x = array_ship.array_ship_location.x;
+				rect_y = array_ship.array_ship_location.y + j;
 				cell[rect_x][rect_y].char_ship_type = 'r';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_CRUISER;
 			}
-			if (array_ship[1].direction == horizontal)
+			if (array_ship.direction == vertical)
 			{
-				rect_x = array_ship[1].array_ship_location->x + j;
-				rect_y = array_ship[1].array_ship_location->y;
+				rect_x = array_ship.array_ship_location.x + j;
+				rect_y = array_ship.array_ship_location.y;
 				cell[rect_x][rect_y].char_ship_type = 'r';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_CRUISER;
@@ -386,18 +388,18 @@ void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_G
 	case SHIP_TYPE_SUBMARINE:
 		for (int j = 0; j < GAME_BATTLESHIP_HEALTH_SUBMARINE; ++j)
 		{
-			if (array_ship[2].direction == vertical)
+			if (array_ship.direction == horizontal)
 			{
-				rect_x = array_ship[2].array_ship_location->x;
-				rect_y = array_ship[2].array_ship_location->y + j;
+				rect_x = array_ship.array_ship_location.x;
+				rect_y = array_ship.array_ship_location.y + j;
 				cell[rect_x][rect_y].char_ship_type = 's';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_SUBMARINE;
 			}
-			if (array_ship[1].direction == horizontal)
+			if (array_ship.direction == vertical)
 			{
-				rect_x = array_ship[1].array_ship_location->x + j;
-				rect_y = array_ship[1].array_ship_location->y;
+				rect_x = array_ship.array_ship_location.x + j;
+				rect_y = array_ship.array_ship_location.y;
 				cell[rect_x][rect_y].char_ship_type = 's';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_SUBMARINE;
@@ -407,18 +409,18 @@ void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_G
 	case SHIP_TYPE_DESTROYER:
 		for (int j = 0; j < GAME_BATTLESHIP_HEALTH_DESTROYER; ++j)
 		{
-			if (array_ship[2].direction == vertical)
+			if (array_ship.direction == horizontal)
 			{
-				rect_x = array_ship[2].array_ship_location->x;
-				rect_y = array_ship[2].array_ship_location->y + j;
+				rect_x = array_ship.array_ship_location.x;
+				rect_y = array_ship.array_ship_location.y + j;
 				cell[rect_x][rect_y].char_ship_type = 'd';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_DESTROYER;
 			}
-			if (array_ship[1].direction == horizontal)
+			if (array_ship.direction == vertical)
 			{
-				rect_x = array_ship[1].array_ship_location->x + j;
-				rect_y = array_ship[1].array_ship_location->y;
+				rect_x = array_ship.array_ship_location.x + j;
+				rect_y = array_ship.array_ship_location.y;
 				cell[rect_x][rect_y].char_ship_type = 'd';
 				cell[rect_x][rect_y].is_ship_placed = true;
 				cell[rect_x][rect_y].ship_type = SHIP_TYPE_DESTROYER;
@@ -527,6 +529,9 @@ bool fnc_init_parameter_environment(Battleship_ThreadParameter* thread_parameter
 	//thread lock
 	thread_parameter->battleship_is_consumer_go = false;
 	thread_parameter->battleship_is_producer_go = false;
+
+	//init close request
+	thread_parameter->battleship_num_close_requested = false;
 	
 	return true;
 }
@@ -543,7 +548,7 @@ void fnc_init_battleship_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_
 			cell[i][j].cell_id = cell_id;
 			cell[i][j].is_Hit = false;
 			cell[i][j].is_ship_placed = false;
-			cell[i][j].char_ship_type = '\0';
+			cell[i][j].char_ship_type = '~';
 			cell[i][j].ship_type = SHIP_TYPE_INIT;
 			cell[i][j].rect.x = i;
 			cell[i][j].rect.y = j;
@@ -552,9 +557,30 @@ void fnc_init_battleship_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_
 	
 }
 
+void fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH])
+{
+	Battleship_Rect rect_hit = {0, 0};
+	bool is_already_hit = false;
+	do
+	{
+		is_already_hit = false;
+		
+		rect_hit.x = rand() % 9;
+		rect_hit.y = rand() % 9;
+		if (cell[rect_hit.x][rect_hit.y].is_Hit == true)
+		{
+			is_already_hit = true;
+		}		
+	}
+	while (is_already_hit == true);
+
+	cell[rect_hit.x][rect_hit.y].is_Hit = true;
+	
+}
+
 void fnc_sync_data(Battleship_ThreadParameter* thread_parameter)
 {
-	
+	//update map about ship health and winner
 }
 
 void fnc_start_session()
@@ -582,6 +608,41 @@ void mock_start_test_session()
 
 	//place ship for both side
 	fnc_ai_place_ship(mock_tp_parameter.cell_ai);
-	fnc_ai_place_ship(mock_tp_parameter.cell_player);	
+	fnc_ai_place_ship(mock_tp_parameter.cell_player);
+
+	mock_test_session_map(&mock_tp_parameter);
+
 	
+}
+
+void mock_test_session_map(Battleship_ThreadParameter* thread_parameter)
+{
+	printf_s("*********************** AI Map **************************\n");
+	printf_s("   0  1  2  3  4  5  6  7  8  9 \n");
+	
+	for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+	{
+		printf_s("%d:", i);
+		for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+		{
+			
+			printf_s("|%c|", thread_parameter->cell_ai[i][j].char_ship_type);
+		}
+		printf_s("\n");
+	}
+	printf_s("*********************************************************\n");
+	printf_s("*********************** Player Map ********************\n");
+	printf_s("   0  1  2  3  4  5  6  7  8  9 \n");
+
+	for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+	{
+		printf_s("%d :", i);
+		for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+		{
+
+			printf_s("|%c|", thread_parameter->cell_player[i][j].char_ship_type);
+		}
+		printf_s("\n");
+	}
+	printf_s("*********************************************************\n");
 }

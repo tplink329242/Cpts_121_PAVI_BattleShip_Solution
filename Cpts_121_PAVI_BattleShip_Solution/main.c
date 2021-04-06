@@ -2,6 +2,9 @@
 
 int main(int argc, char* argv[])
 {
+	//seeds
+	srand((unsigned)time(NULL));
+	
 	mock_start_test_session();
 	
 	return 0;
