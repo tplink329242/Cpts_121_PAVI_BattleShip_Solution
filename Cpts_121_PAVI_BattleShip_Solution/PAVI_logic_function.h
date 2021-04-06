@@ -11,13 +11,15 @@ extern "C" {
 #define WINDOW_HEIGHT 768
 
 
-#define GAME_BATTLESHIP_VALUE_HEALTH_CARRIER 5
-#define GAME_BATTLESHIP_VALUE_HEALTH_BATTLESHIP 4
-#define GAME_BATTLESHIP_VALUE_HEALTH_CRUISER 3
-#define GAME_BATTLESHIP_VALUE_HEALTH_SUBMARINE 2
+#define GAME_BATTLESHIP_HEALTH_CARRIER 5
+#define GAME_BATTLESHIP_HEALTH_BATTLESHIP 4
+#define GAME_BATTLESHIP_HEALTH_CRUISER 3
+#define GAME_BATTLESHIP_HEALTH_SUBMARINE 3
+#define GAME_BATTLESHIP_HEALTH_DESTROYER 2
 
+#define GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH 10
+#define GAME_BATTLESHIP_MAX_GAME_SHIP_NUM 5
 
-	
 
 //std library	
 #include <stdio.h>
@@ -27,6 +29,23 @@ extern "C" {
 #include <Windows.h>
 #include <stdbool.h>
 #include <string.h>
+
+//sdl include	
+#include "include\SDL_mutex.h"
+#include "include/SDL.h"
+#include "include/SDL_timer.h"
+#include "include/SDL_image.h"
+#include "include/SDL_ttf.h"
+#include "include/SDL_thread.h"
+	
+	
+	typedef enum
+	{
+		round_none,
+		round_player,
+		round_ai
+
+	}Battleship_WhoRound;
 
 	typedef enum
 	{
@@ -62,8 +81,8 @@ extern "C" {
 
 	typedef struct
 	{
-		boolean is_LockedInGame;
-		boolean is_Hit;
+		bool is_ship_placed;
+		bool is_Hit;
 
 		//init for twice
 		char char_ship_type;
@@ -87,15 +106,39 @@ extern "C" {
 
 	typedef struct
 	{
-		int num_game_round;
-		Battleship_Cell array_player_map[10][10];
-		Battleship_Cell array_AI_map[10][10];
+		bool is_active;
+		Battleship_Cell array_player_map[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH];
+		Battleship_Cell array_AI_map[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH];
 
 	}Battleship_GameRound;
 
 	typedef struct
 	{
 		int thread_id;
+		
+		//close flag
+		bool battleship_num_close_requested;
+
+		//thread lock
+		bool battleship_is_consumer_go;
+		bool battleship_is_producer_go;
+
+		//thread signal
+		SDL_cond* battleship_thd_canProduce;
+		SDL_cond* battleship_thd_canConsume;
+		SDL_mutex* battleship_thd_bufferLock;
+
+		//game map data
+		Battleship_Cell cell_player[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH];
+		Battleship_Cell cell_ai[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH];
+
+		//game round record
+		Battleship_GameRound game_round_map[100];
+
+		//define next round belongs to whom
+		Battleship_WhoRound who_round;
+
+		
 		
 	}Battleship_ThreadParameter;
 
@@ -106,7 +149,13 @@ extern "C" {
 	bool fnc_player_place_ship(Battleship_ThreadParameter* thread_parameter);
 
 	//player place the ship
-	bool fnc_ai_place_ship(Battleship_ThreadParameter* thread_parameter);
+	bool fnc_ai_place_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
+
+	//get an available rect for pick up
+	Battleship_Rect fnc_get_available_random_place(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int ship_type, Battleship_Direction ship_direction);
+	
+	//check who pick up the first round
+	void fnc_update_cell_using_array_ship(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ship array_ship[5], Battleship_ShipType ship_type);
 
 	//check who pick up the first round
 	Battleship_PlayerType fnc_select_who_starts_first(Battleship_ThreadParameter* thread_parameter);
@@ -134,6 +183,12 @@ extern "C" {
 
 	//init game surroundings
 	bool fnc_init_parameter_environment(Battleship_ThreadParameter* thread_parameter);
+
+	//init game cells
+	void fnc_init_battleship_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
+
+	//sync parameter data
+	void fnc_sync_data(Battleship_ThreadParameter* thread_parameter);
 
 	//start a new session
 	void fnc_start_session();

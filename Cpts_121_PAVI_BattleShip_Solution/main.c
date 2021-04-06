@@ -2,7 +2,7 @@
 
 int main(int argc, char* argv[])
 {
-	Battleship_Cell cell;
+	//Battleship_Cell cell;
 	
 	return 0;
 }
