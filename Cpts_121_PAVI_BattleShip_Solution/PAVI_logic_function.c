@@ -581,8 +581,7 @@ void mock_start_test_session()
 	fnc_init_parameter_environment(&mock_tp_parameter);
 
 	//place ship for both side
-
-	
-	
+	fnc_ai_place_ship(mock_tp_parameter.cell_ai);
+	fnc_ai_place_ship(mock_tp_parameter.cell_player);	
 	
 }

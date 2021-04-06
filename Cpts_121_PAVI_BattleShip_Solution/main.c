@@ -2,7 +2,7 @@
 
 int main(int argc, char* argv[])
 {
-	//Battleship_Cell cell;
+	mock_start_test_session();
 	
 	return 0;
 }

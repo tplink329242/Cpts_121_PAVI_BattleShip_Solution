@@ -291,4 +291,11 @@
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\x64\SDL2.lib" />
+    <Library Include="lib\x64\SDL2_ttf.lib" />
+    <Library Include="lib\x64\SDL2_image.lib" />
+    <Library Include="lib\x64\SDL2main.lib" />
+    <Library Include="lib\x64\SDL2test.lib" />
+  </ItemGroup>
 </Project>

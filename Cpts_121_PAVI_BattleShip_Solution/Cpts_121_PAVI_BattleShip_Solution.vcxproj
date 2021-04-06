@@ -234,6 +234,13 @@
     <ClInclude Include="include\SDL_vulkan.h" />
     <ClInclude Include="PAVI_logic_function.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\x64\SDL2.lib" />
+    <Library Include="lib\x64\SDL2main.lib" />
+    <Library Include="lib\x64\SDL2test.lib" />
+    <Library Include="lib\x64\SDL2_image.lib" />
+    <Library Include="lib\x64\SDL2_ttf.lib" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
