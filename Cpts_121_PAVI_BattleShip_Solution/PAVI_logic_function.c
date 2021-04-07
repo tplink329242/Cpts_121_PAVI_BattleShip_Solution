@@ -539,7 +539,29 @@ bool fnc_init_parameter_environment(Battleship_ThreadParameter* thread_parameter
 
 	//init ship health
 	thread_parameter->array_health_ai_battleship[0] = 0;
+	thread_parameter->array_health_ai_battleship[1] = 5;
+	thread_parameter->array_health_ai_battleship[2] = 4;
+	thread_parameter->array_health_ai_battleship[3] = 3;
+	thread_parameter->array_health_ai_battleship[4] = 3;
+	thread_parameter->array_health_ai_battleship[5] = 2;
+	
 	thread_parameter->array_health_player_battleship[0] = 0;
+	thread_parameter->array_health_player_battleship[1] = 5;
+	thread_parameter->array_health_player_battleship[2] = 4;
+	thread_parameter->array_health_player_battleship[3] = 3;
+	thread_parameter->array_health_player_battleship[4] = 3;
+	thread_parameter->array_health_player_battleship[5] = 2;
+
+	thread_parameter->static_player.num_hit = 0;
+	thread_parameter->static_player.num_miss = 0;
+	thread_parameter->static_player.num_total_shots = 0;
+	thread_parameter->static_player.ratio_miss = 0.0;
+
+	thread_parameter->static_ai.num_hit = 0;
+	thread_parameter->static_ai.num_miss = 0;
+	thread_parameter->static_ai.num_total_shots = 0;
+	thread_parameter->static_ai.ratio_miss = 0.0;
+	
 	
 	return true;
 }
@@ -556,7 +578,7 @@ void fnc_init_battleship_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_
 			cell[i][j].cell_id = cell_id;
 			cell[i][j].is_Hit = false;
 			cell[i][j].is_ship_placed = false;
-			cell[i][j].char_ship_type = '~';
+			cell[i][j].char_ship_type = '-';
 			cell[i][j].ship_type = SHIP_TYPE_INIT;
 			cell[i][j].rect.x = i;
 			cell[i][j].rect.y = j;
@@ -573,8 +595,8 @@ Battleship_Rect fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME
 	{
 		is_already_hit = false;
 		
-		rect_hit.x = rand() % 9;
-		rect_hit.y = rand() % 9;
+		rect_hit.x = rand() % 10;
+		rect_hit.y = rand() % 10;
 		if (cell[rect_hit.x][rect_hit.y].is_Hit == true)
 		{
 			is_already_hit = true;
@@ -590,14 +612,64 @@ Battleship_Rect fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME
 	return rect_hit;	
 }
 
-void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int array_health_player_battleship[6])
+void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int* array_health_player_battleship)
 {
+
+
+	int* health_init = array_health_player_battleship;
+	*health_init = 0;
+	array_health_player_battleship++;
+
+	
+
+	int* health_carrier = array_health_player_battleship;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_CARRIER;
+	array_health_player_battleship++;
+
+	int* ship_ptr = health_carrier;
+	
+
+	int* health_battleship = array_health_player_battleship;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_BATTLESHIP;
+	array_health_player_battleship++;
+
+	int* health_cruiser = array_health_player_battleship;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_CRUISER;
+	array_health_player_battleship++;
+
+	int* health_submarine = array_health_player_battleship;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_SUBMARINE;
+	array_health_player_battleship++;
+
+	int* health_destroyer = array_health_player_battleship;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_DESTROYER;
+
+	array_health_player_battleship = health_init;
+	
+	
 	//init health
-	array_health_player_battleship[SHIP_TYPE_CARRIER] = GAME_BATTLESHIP_HEALTH_CARRIER;
+	//*array_health_player_battleship = 0;
+	/*array_health_player_battleship++;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_CARRIER;
+	array_health_player_battleship++;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_BATTLESHIP;
+	array_health_player_battleship++;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_CRUISER;
+	array_health_player_battleship++;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_SUBMARINE;
+	array_health_player_battleship++;
+	*array_health_player_battleship = GAME_BATTLESHIP_HEALTH_DESTROYER;
+
+	array_health_player_battleship -= 5;*/
+
+	
+	/*array_health_player_battleship[SHIP_TYPE_CARRIER] = GAME_BATTLESHIP_HEALTH_CARRIER;
 	array_health_player_battleship[SHIP_TYPE_BATTLESHIP] = GAME_BATTLESHIP_HEALTH_BATTLESHIP;
 	array_health_player_battleship[SHIP_TYPE_CRUISER] = GAME_BATTLESHIP_HEALTH_CRUISER;
 	array_health_player_battleship[SHIP_TYPE_SUBMARINE] = GAME_BATTLESHIP_HEALTH_SUBMARINE;
-	array_health_player_battleship[SHIP_TYPE_DESTROYER] = GAME_BATTLESHIP_HEALTH_DESTROYER;
+	array_health_player_battleship[SHIP_TYPE_DESTROYER] = GAME_BATTLESHIP_HEALTH_DESTROYER;*/
+
+	
 
 	int num_count = 0;
 
@@ -607,28 +679,29 @@ void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_
 		{
 			if (cell[i][j].is_ship_placed == true)
 			{
-				switch (cell[i][j].ship_type)
+				if (cell[i][j].is_Hit == true)
 				{
-				case SHIP_TYPE_INIT:
-					break;
-				case SHIP_TYPE_CARRIER:
-					array_health_player_battleship[SHIP_TYPE_CARRIER]--;
-					break;
-				case SHIP_TYPE_BATTLESHIP:
-					array_health_player_battleship[SHIP_TYPE_BATTLESHIP]--;
-					break;
-				case SHIP_TYPE_CRUISER:
-					array_health_player_battleship[SHIP_TYPE_CRUISER]--;
-					break;
-				case SHIP_TYPE_SUBMARINE:
-					array_health_player_battleship[SHIP_TYPE_SUBMARINE]--;
-					break;
-				case SHIP_TYPE_DESTROYER:
-					array_health_player_battleship[SHIP_TYPE_DESTROYER]--;
-					break;
-				default:
-					printf_s("unknown ship type!\n");		
-				}
+					switch (cell[i][j].ship_type)
+					{
+					case SHIP_TYPE_CARRIER:
+						(*health_carrier)--;
+						break;
+					case SHIP_TYPE_BATTLESHIP:
+						(*health_battleship)--;
+						break;
+					case SHIP_TYPE_CRUISER:
+						(*health_cruiser)--;
+						break;
+					case SHIP_TYPE_SUBMARINE:
+						(*health_submarine)--;
+						break;
+					case SHIP_TYPE_DESTROYER:
+						(*health_destroyer)--;
+						break;
+					default:;
+						//printf_s("unknown ship type!\n");		
+					}					
+				}				
 			}
 		}
 	}
@@ -636,15 +709,16 @@ void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_
 	//check winner condition
 	for (int i = 1; i < 6; ++i)
 	{
-		if (array_health_player_battleship[i] == 0)
+		if (*ship_ptr == 0)
 		{
 			num_count++;
 		}
+		ship_ptr++;
 	}
 
 	if (num_count == 5)
 	{
-		array_health_player_battleship[0] = 1;
+		*health_init = 1;
 	}	
 }
 
@@ -670,6 +744,10 @@ void fnc_start_session()
 
 void mock_start_test_session()
 {
+	//open a output file
+	FILE* outfile = fnc_open_file("output.dat", "w");
+
+	
 	//create a new parameter
 	Battleship_ThreadParameter mock_tp_parameter;
 
@@ -685,17 +763,37 @@ void mock_start_test_session()
 	//decide who go first
 	mock_tp_parameter.who_go_first = fnc_select_who_starts_first();
 
-	//define 1 round var
+	//define 1 round var, 0 player win, 1 ai win
 	int winner = -1;
 	Battleship_Rect rect_hit;
 	bool is_ai_hit = false;
 	bool is_Player_hit = false;
+
+	//health ptr test
+	int* health_player_ptr = mock_tp_parameter.array_health_player_battleship;
+	int* health_ai_ptr = mock_tp_parameter.array_health_ai_battleship;
+
+
+	//define round count
+	int num_round = 0;
+	//int num_hit = 0;
+	//int num_miss = 0;
+	
+
+	//print original map
+	fnc_output_session_map(&mock_tp_parameter, outfile);
+	
 
 	while (winner == -1)
 	{
 		//reset flag
 		is_ai_hit = false;
 		is_Player_hit = false;
+
+		num_round++;
+
+		//fprint game round number
+		fprintf(outfile, "Game Round %d !\n", num_round);
 
 		
 		//player go first
@@ -707,14 +805,80 @@ void mock_start_test_session()
 			if (is_Player_hit)
 			{
 				printf_s("\nIt is a player hit!");
-				fnc_update_battleship_health(mock_tp_parameter.cell_ai, mock_tp_parameter.array_health_ai_battleship);
 
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a player hit!\n", rect_hit.x, rect_hit.y);
+
+
+				//static data update
+				mock_tp_parameter.static_player.num_hit++;
+				
+				
+				fnc_update_battleship_health(mock_tp_parameter.cell_ai, health_ai_ptr);
+
+				
+				//check if we have a winner
+				if (mock_tp_parameter.array_health_ai_battleship[0] == 1)
+				{
+					winner = 0;
+					break;
+				}
+				
 			}
 			else
 			{
 				printf_s("\nIt is a player miss!");
-			}			
+
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a player miss!\n", rect_hit.x, rect_hit.y);
+
+				//static data update
+				mock_tp_parameter.static_player.num_miss++;
+
+				
+			}
+
+				
+			//ai go then
+			rect_hit = fnc_ai_attack_cell(mock_tp_parameter.cell_player);
+			is_ai_hit = fnc_check_shot(mock_tp_parameter.cell_player, rect_hit);
+			if (is_ai_hit)
+			{
+				printf_s("\nIt is a ai hit!");
+				fnc_update_battleship_health(mock_tp_parameter.cell_player, health_player_ptr);
+
+
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a ai hit!\n", rect_hit.x, rect_hit.y);
+
+
+				//static data update
+				mock_tp_parameter.static_ai.num_hit++;
+
+						
+
+				if (mock_tp_parameter.array_health_player_battleship[0] == 1)
+				{
+					winner = 1;
+					break;
+				}
+
+			}
+			else
+			{
+				printf_s("\nIt is a ai miss!");
+
+
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a ai miss!\n", rect_hit.x, rect_hit.y);
+
+				//static data update
+				mock_tp_parameter.static_ai.num_miss++;
+				
+			}
+			
 		}
+	
 		else
 		{
 			//ai go first
@@ -723,25 +887,115 @@ void mock_start_test_session()
 			if (is_ai_hit)
 			{
 				printf_s("\nIt is a ai hit!");
-				fnc_update_battleship_health(mock_tp_parameter.cell_player, mock_tp_parameter.array_health_player_battleship);
+				fnc_update_battleship_health(mock_tp_parameter.cell_player, health_player_ptr);
 
+
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a ai hit!\n", rect_hit.x, rect_hit.y);
+
+
+				//static data update
+				mock_tp_parameter.static_ai.num_hit++;
+
+				
+
+				if (mock_tp_parameter.array_health_player_battleship[0] == 1)
+				{
+					winner = 1;
+					break;
+				}
 			}
 			else
 			{
 				printf_s("\nIt is a ai miss!");
+
+
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a ai miss!\n", rect_hit.x, rect_hit.y);
+
+				//static data update
+				mock_tp_parameter.static_ai.num_miss++;
+
+				
 			}
+
+			//player go then
+			rect_hit = fnc_ai_attack_cell(mock_tp_parameter.cell_ai);
+			is_Player_hit = fnc_check_shot(mock_tp_parameter.cell_ai, rect_hit);
+			if (is_Player_hit)
+			{
+				printf_s("\nIt is a player hit!");
+				fnc_update_battleship_health(mock_tp_parameter.cell_ai, health_ai_ptr);
+
+
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a player hit!\n", rect_hit.x, rect_hit.y);
+
+
+				//static data update
+				mock_tp_parameter.static_player.num_hit++;
+
+
+				
+
+				if (mock_tp_parameter.array_health_ai_battleship[0] == 1)
+				{
+					winner = 0;
+					break;
+				}
+
+			}
+			else
+			{
+				printf_s("\nIt is a player miss!");
+
+				
+				//fprint game rect result
+				fprintf(outfile, "(%d, %d) is a player miss!\n", rect_hit.x, rect_hit.y);
+
+				//static data update
+				mock_tp_parameter.static_player.num_miss++;
+
+				
+			}
+
 		}
 		
 	}
-	
-	
-	
 
-	
+	if (winner == 0)
+	{
+		printf_s("\nPlayer win!\n");
 
-	
+		//fprint game winner
+		fprintf(outfile, "The winner is player\n");
+		
+	}
+	else if(winner == 1)
+	{
+		printf_s("\nAI win!\n");
 
+		//fprint game winner
+		fprintf(outfile, "The winner is AI\n");
+		
+	}
+
+	//total static update
+	mock_tp_parameter.static_player.num_total_shots = num_round;
+	mock_tp_parameter.static_player.ratio_miss = mock_tp_parameter.static_player.num_miss / (double)num_round;
 	
+	mock_tp_parameter.static_ai.num_total_shots = num_round;
+	mock_tp_parameter.static_ai.ratio_miss = mock_tp_parameter.static_ai.num_miss / (double)num_round;
+
+
+	//fprint map and static
+	mock_test_session_map(&mock_tp_parameter);
+	
+	//print final map
+	fnc_output_session_map(&mock_tp_parameter, outfile);	
+	fnc_output_players_static(&mock_tp_parameter, outfile);
+
+	fclose(outfile);
 }
 
 void mock_test_session_map(Battleship_ThreadParameter* thread_parameter)
@@ -765,7 +1019,7 @@ void mock_test_session_map(Battleship_ThreadParameter* thread_parameter)
 
 	for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
 	{
-		printf_s("%d :", i);
+		printf_s("%d:", i);
 		for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
 		{
 
@@ -774,4 +1028,77 @@ void mock_test_session_map(Battleship_ThreadParameter* thread_parameter)
 		printf_s("\n");
 	}
 	printf_s("*********************************************************\n");
+}
+
+FILE* fnc_open_file(char* file_name, char* file_access)
+{
+	FILE* infile = NULL;
+	infile = fopen(file_name, file_access);
+	if (infile == NULL)
+	{
+		perror("Error: ");
+		return NULL;
+	}
+
+	//printf("Opening success\n");
+	return infile;
+}
+
+void fnc_output_session_map(Battleship_ThreadParameter* thread_parameter, FILE* outfile)
+{
+	//AI map
+	fprintf(outfile, "*********************** AI Map ********************\n");
+	fprintf(outfile, "   0  1  2  3  4  5  6  7  8  9 \n");
+
+	for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+	{
+		fprintf(outfile, "%d:", i);
+		for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+		{
+
+			fprintf(outfile, "|%c|", thread_parameter->cell_ai[i][j].char_ship_type);
+		}
+		fprintf(outfile, "\n");
+	}
+
+	fprintf(outfile, "\n");
+	fprintf(outfile, "**************************************************\n");
+	fprintf(outfile, "\n");
+	
+	//Player map
+	fprintf(outfile, "************* Player Map *************************\n");
+	fprintf(outfile, "   0  1  2  3  4  5  6  7  8  9 \n");
+
+	for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+	{
+		fprintf(outfile, "%d:", i);
+		for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+		{
+
+			fprintf(outfile, "|%c|", thread_parameter->cell_player[i][j].char_ship_type);
+		}
+		fprintf(outfile, "\n");
+	}
+	fprintf(outfile, "**************************************************\n");	
+}
+
+void fnc_output_players_static(Battleship_ThreadParameter* thread_parameter, FILE* outfile)
+{
+	//print total statics
+	fprintf(outfile, "*******Output information***********************\n");
+	fprintf(outfile, "*******Player Information***********************\n");
+	fprintf(outfile, "******Total shots: %d\n", thread_parameter->static_player.num_total_shots);
+	fprintf(outfile, "******Total hits: %d\n", thread_parameter->static_player.num_hit);
+	fprintf(outfile, "******Total miss: %d\n", thread_parameter->static_player.num_miss);
+	fprintf(outfile, "******Miss Ratio: %.2lf\n", thread_parameter->static_player.ratio_miss);
+	fprintf(outfile, "**************************************************\n");
+	
+	fprintf(outfile, "\n");
+	
+	fprintf(outfile, "*******AI Information***********************\n");
+	fprintf(outfile, "******Total shots: %d\n", thread_parameter->static_ai.num_total_shots);
+	fprintf(outfile, "******Total hits: %d\n", thread_parameter->static_ai.num_hit);
+	fprintf(outfile, "******Total miss: %d\n", thread_parameter->static_ai.num_miss);
+	fprintf(outfile, "******Miss Ratio: %.2lf\n", thread_parameter->static_ai.ratio_miss);
+	fprintf(outfile, "**************************************************\n");
 }

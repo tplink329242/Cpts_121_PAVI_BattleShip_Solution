@@ -114,6 +114,16 @@ extern "C" {
 
 	typedef struct
 	{
+		int num_total_shots;
+		int num_hit;
+		int num_miss;
+		double ratio_miss;
+				
+	}Battleship_Static;
+	
+
+	typedef struct
+	{
 		int thread_id;
 		
 		//close flag
@@ -140,10 +150,15 @@ extern "C" {
 
 		//make who is the first one
 		Battleship_PlayerType who_go_first;
+		
 
 		//battleship health for both players
 		int array_health_player_battleship[6];
 		int array_health_ai_battleship[6];
+
+		//battleship_statics
+		Battleship_Static static_player;
+		Battleship_Static static_ai;
 		
 			
 	}Battleship_ThreadParameter;
@@ -197,7 +212,7 @@ extern "C" {
 	Battleship_Rect fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);
 
 	//sync battleship health
-	void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int array_health_player_battleship[6]);
+	void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int* array_health_player_battleship);
 
 	//sync parameter data
 	void fnc_sync_data(Battleship_ThreadParameter* thread_parameter);
@@ -210,6 +225,17 @@ extern "C" {
 
 	//test session condition
 	void mock_test_session_map(Battleship_ThreadParameter* thread_parameter);
+
+	//file components
+	//
+	//open a file
+	FILE* fnc_open_file(char* file_name, char* file_access);
+
+	//output session map to a file
+	void fnc_output_session_map(Battleship_ThreadParameter* thread_parameter, FILE* outfile);
+
+	//output ai and player statics
+	void fnc_output_players_static(Battleship_ThreadParameter* thread_parameter, FILE* outfile);
 	
 #ifdef __cplusplus
 }
