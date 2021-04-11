@@ -21,6 +21,9 @@
     <ClCompile Include="PAVI_logic_function.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="PAVI_render_function.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PAVI_logic_function.h">
@@ -288,6 +291,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\SDL_vulkan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PAVI_render_function.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

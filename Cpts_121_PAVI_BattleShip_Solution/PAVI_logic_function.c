@@ -561,6 +561,9 @@ bool fnc_init_parameter_environment(Battleship_ThreadParameter* thread_parameter
 	thread_parameter->static_ai.num_miss = 0;
 	thread_parameter->static_ai.num_total_shots = 0;
 	thread_parameter->static_ai.ratio_miss = 0.0;
+
+	//init game phase
+	thread_parameter->game_phase = BS_GAME_PHASE_INIT;
 	
 	
 	return true;
@@ -606,8 +609,8 @@ Battleship_Rect fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME
 
 	cell[rect_hit.x][rect_hit.y].is_Hit = true;
 
-	//modify char as a x mark
-	cell[rect_hit.x][rect_hit.y].char_ship_type = 'X';
+	//modify char as a * mark
+	cell[rect_hit.x][rect_hit.y].char_ship_type = '*';
 
 	return rect_hit;	
 }

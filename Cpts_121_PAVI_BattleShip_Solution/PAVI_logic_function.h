@@ -71,6 +71,19 @@ extern "C" {
 		SHIP_TYPE_DESTROYER		
 		
 	}Battleship_ShipType;
+
+	typedef enum
+	{
+		BS_GAME_PHASE_INIT,
+		BS_GAME_PHASE_MAIN_MENU,
+		BS_GAME_PHASE_PLAYER_PLACE_SHIP,
+		BS_GAME_PHASE_DECIDE_WHO_GO_FIRST,		
+		BS_GAME_PHASE_AI_PLACE_SHIP,
+		BS_GAME_PHASE_PLAYER_SHOT,
+		BS_GAME_PHASE_AI_SHOT,
+		BS_GAME_PHASE_STATIC
+
+	}Battleship_GamePhase;
 	
 	typedef struct
 	{
@@ -121,7 +134,6 @@ extern "C" {
 				
 	}Battleship_Static;
 	
-
 	typedef struct
 	{
 		int thread_id;
@@ -145,6 +157,8 @@ extern "C" {
 		//game round record
 		//Battleship_GameRound game_round_map[100];
 
+		Battleship_GamePhase game_phase;
+		
 		//define next round belongs to whom
 		Battleship_WhoRound who_round;
 

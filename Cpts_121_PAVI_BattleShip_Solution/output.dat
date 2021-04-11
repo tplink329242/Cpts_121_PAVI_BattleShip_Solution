@@ -1,329 +1,353 @@
 *********************** AI Map ********************
    0  1  2  3  4  5  6  7  8  9 
-0:|-||-||-||r||-||-||-||-||-||-|
-1:|-||-||d||r||s||s||s||-||-||-|
-2:|-||-||d||r||-||-||-||-||-||-|
-3:|-||-||-||-||-||-||-||-||-||-|
-4:|-||-||-||-||-||c||c||c||c||c|
-5:|-||-||-||-||-||-||-||-||-||-|
+0:|r||-||-||-||-||-||-||-||-||-|
+1:|r||-||-||c||-||-||-||-||-||-|
+2:|r||-||-||c||b||b||b||b||-||-|
+3:|-||-||-||c||-||-||-||-||-||-|
+4:|-||-||-||c||-||-||-||-||-||-|
+5:|-||-||-||c||-||-||-||-||-||-|
 6:|-||-||-||-||-||-||-||-||-||-|
-7:|-||-||-||-||-||-||-||-||-||-|
-8:|-||-||b||b||b||b||-||-||-||-|
+7:|-||s||s||s||-||-||-||-||-||-|
+8:|-||d||d||-||-||-||-||-||-||-|
 9:|-||-||-||-||-||-||-||-||-||-|
 
 **************************************************
 
 ************* Player Map *************************
    0  1  2  3  4  5  6  7  8  9 
-0:|-||-||-||d||-||-||-||r||r||r|
-1:|-||-||-||d||-||-||-||-||-||-|
-2:|-||-||b||-||-||-||-||-||-||-|
-3:|-||-||b||-||-||-||-||-||-||-|
-4:|-||-||b||-||-||-||-||-||-||-|
-5:|-||-||b||-||-||-||-||-||-||-|
-6:|-||-||-||-||-||c||c||c||c||c|
-7:|-||-||-||-||s||-||-||-||-||-|
-8:|-||-||-||-||s||-||-||-||-||-|
-9:|-||-||-||-||s||-||-||-||-||-|
+0:|-||-||-||-||-||-||-||-||-||-|
+1:|r||-||-||-||c||c||c||c||c||-|
+2:|r||-||-||-||-||-||-||-||-||-|
+3:|r||-||b||b||b||b||-||-||-||-|
+4:|-||-||-||-||-||-||-||-||-||-|
+5:|-||-||-||s||-||-||-||-||-||-|
+6:|-||-||-||s||-||d||-||-||-||-|
+7:|-||-||-||s||-||d||-||-||-||-|
+8:|-||-||-||-||-||-||-||-||-||-|
+9:|-||-||-||-||-||-||-||-||-||-|
 **************************************************
-/n Game Round 1 !
-(5, 8) is a ai miss!
-(3, 6) is a player miss!
-/n Game Round 2 !
-(1, 3) is a ai hit!
-(5, 3) is a player miss!
-/n Game Round 3 !
-(5, 4) is a ai miss!
-(6, 5) is a player miss!
-/n Game Round 4 !
-(9, 4) is a ai hit!
-(3, 5) is a player miss!
-/n Game Round 5 !
-(6, 3) is a ai miss!
-(3, 3) is a player miss!
-/n Game Round 6 !
-(3, 3) is a ai miss!
+Game Round 1 !
 (8, 9) is a player miss!
-/n Game Round 7 !
-(4, 1) is a ai miss!
-(5, 5) is a player miss!
-/n Game Round 8 !
-(6, 4) is a ai miss!
-(7, 5) is a player miss!
-/n Game Round 9 !
-(6, 1) is a ai miss!
-(3, 4) is a player miss!
-/n Game Round 10 !
-(1, 1) is a ai miss!
-(0, 2) is a player miss!
-/n Game Round 11 !
-(1, 4) is a ai miss!
-(4, 7) is a player hit!
-/n Game Round 12 !
-(3, 2) is a ai hit!
-(9, 1) is a player miss!
-/n Game Round 13 !
+(7, 1) is a ai miss!
+Game Round 2 !
+(1, 6) is a player miss!
 (8, 1) is a ai miss!
-(0, 8) is a player miss!
-/n Game Round 14 !
-(1, 7) is a ai miss!
-(2, 6) is a player miss!
-/n Game Round 15 !
-(5, 9) is a ai miss!
-(2, 9) is a player miss!
-/n Game Round 16 !
-(4, 4) is a ai miss!
-(2, 0) is a player miss!
-/n Game Round 17 !
-(2, 3) is a ai miss!
-(3, 9) is a player miss!
-/n Game Round 18 !
-(0, 3) is a ai hit!
-(7, 3) is a player miss!
-/n Game Round 19 !
-(8, 6) is a ai miss!
-(4, 0) is a player miss!
-/n Game Round 20 !
-(0, 1) is a ai miss!
-(8, 0) is a player miss!
-/n Game Round 21 !
-(4, 5) is a ai miss!
-(8, 6) is a player miss!
-/n Game Round 22 !
-(8, 7) is a ai miss!
-(0, 5) is a player miss!
-/n Game Round 23 !
-(5, 3) is a ai miss!
-(4, 5) is a player hit!
-/n Game Round 24 !
-(7, 5) is a ai miss!
-(8, 5) is a player hit!
-/n Game Round 25 !
-(0, 7) is a ai hit!
-(9, 6) is a player miss!
-/n Game Round 26 !
-(2, 7) is a ai miss!
+Game Round 3 !
 (6, 9) is a player miss!
-/n Game Round 27 !
-(9, 0) is a ai miss!
-(8, 2) is a player hit!
-/n Game Round 28 !
-(4, 2) is a ai hit!
-(8, 8) is a player miss!
-/n Game Round 29 !
-(4, 0) is a ai miss!
-(4, 4) is a player miss!
-/n Game Round 30 !
-(3, 0) is a ai miss!
-(1, 2) is a player hit!
-/n Game Round 31 !
-(0, 5) is a ai miss!
-(5, 0) is a player miss!
-/n Game Round 32 !
-(1, 6) is a ai miss!
-(2, 2) is a player hit!
-/n Game Round 33 !
-(1, 2) is a ai miss!
-(5, 1) is a player miss!
-/n Game Round 34 !
-(1, 8) is a ai miss!
-(2, 4) is a player miss!
-/n Game Round 35 !
-(0, 0) is a ai miss!
-(9, 4) is a player miss!
-/n Game Round 36 !
-(8, 4) is a ai hit!
-(2, 3) is a player hit!
-/n Game Round 37 !
-(9, 8) is a ai miss!
-(4, 6) is a player hit!
-/n Game Round 38 !
-(3, 8) is a ai miss!
-(5, 8) is a player miss!
-/n Game Round 39 !
-(0, 9) is a ai hit!
-(6, 4) is a player miss!
-/n Game Round 40 !
-(2, 0) is a ai miss!
-(9, 8) is a player miss!
-/n Game Round 41 !
-(0, 4) is a ai miss!
-(5, 2) is a player miss!
-/n Game Round 42 !
-(4, 9) is a ai miss!
-(9, 0) is a player miss!
-/n Game Round 43 !
-(3, 5) is a ai miss!
-(1, 8) is a player miss!
-/n Game Round 44 !
-(9, 7) is a ai miss!
-(6, 3) is a player miss!
-/n Game Round 45 !
-(5, 1) is a ai miss!
-(6, 6) is a player miss!
-/n Game Round 46 !
-(2, 9) is a ai miss!
-(7, 9) is a player miss!
-/n Game Round 47 !
-(2, 2) is a ai hit!
-(0, 3) is a player hit!
-/n Game Round 48 !
-(9, 5) is a ai miss!
-(5, 6) is a player miss!
-/n Game Round 49 !
-(5, 6) is a ai miss!
-(1, 0) is a player miss!
-/n Game Round 50 !
-(7, 2) is a ai miss!
-(1, 3) is a player hit!
-/n Game Round 51 !
-(8, 0) is a ai miss!
-(9, 5) is a player miss!
-/n Game Round 52 !
-(3, 4) is a ai miss!
-(6, 1) is a player miss!
-/n Game Round 53 !
-(6, 7) is a ai hit!
-(6, 2) is a player miss!
-/n Game Round 54 !
-(7, 9) is a ai miss!
-(3, 7) is a player miss!
-/n Game Round 55 !
-(6, 2) is a ai miss!
-(4, 8) is a player hit!
-/n Game Round 56 !
-(2, 6) is a ai miss!
-(0, 6) is a player miss!
-/n Game Round 57 !
-(6, 5) is a ai hit!
-(9, 7) is a player miss!
-/n Game Round 58 !
-(1, 0) is a ai miss!
-(7, 7) is a player miss!
-/n Game Round 59 !
-(4, 6) is a ai miss!
-(0, 7) is a player miss!
-/n Game Round 60 !
+(8, 3) is a ai miss!
+Game Round 4 !
+(0, 0) is a player hit!
+(6, 7) is a ai miss!
+Game Round 5 !
+(7, 1) is a player hit!
 (7, 0) is a ai miss!
-(5, 4) is a player miss!
-/n Game Round 61 !
+Game Round 6 !
+(7, 6) is a player miss!
+(4, 9) is a ai miss!
+Game Round 7 !
+(6, 3) is a player miss!
+(0, 3) is a ai miss!
+Game Round 8 !
+(2, 9) is a player miss!
 (9, 9) is a ai miss!
-(5, 7) is a player miss!
-/n Game Round 62 !
-(6, 6) is a ai hit!
-(7, 4) is a player miss!
-/n Game Round 63 !
-(0, 2) is a ai miss!
-(6, 7) is a player miss!
-/n Game Round 64 !
-(7, 4) is a ai hit!
-(3, 1) is a player miss!
-/n Game Round 65 !
-(7, 8) is a ai miss!
-(6, 8) is a player miss!
-/n Game Round 66 !
-(0, 8) is a ai hit!
-(1, 5) is a player hit!
-/n Game Round 67 !
-(6, 0) is a ai miss!
-(7, 8) is a player miss!
-/n Game Round 68 !
-(5, 5) is a ai miss!
-(8, 3) is a player hit!
-/n Game Round 69 !
-(7, 7) is a ai miss!
-(4, 9) is a player hit!
-/n Game Round 70 !
-(7, 6) is a ai miss!
-(2, 8) is a player miss!
-/n Game Round 71 !
-(8, 5) is a ai miss!
-(2, 5) is a player miss!
-/n Game Round 72 !
-(1, 5) is a ai miss!
-(4, 1) is a player miss!
-/n Game Round 73 !
+Game Round 9 !
+(2, 2) is a player miss!
+(3, 2) is a ai hit!
+Game Round 10 !
+(9, 5) is a player miss!
 (3, 9) is a ai miss!
-(4, 2) is a player miss!
-/n Game Round 74 !
-(4, 3) is a ai miss!
-(8, 1) is a player miss!
-/n Game Round 75 !
-(8, 2) is a ai miss!
-(5, 9) is a player miss!
-/n Game Round 76 !
-(8, 9) is a ai miss!
-(7, 0) is a player miss!
-/n Game Round 77 !
-(4, 8) is a ai miss!
-(8, 7) is a player miss!
-/n Game Round 78 !
-(5, 2) is a ai hit!
-(7, 1) is a player miss!
-/n Game Round 79 !
-(2, 1) is a ai miss!
-(9, 3) is a player miss!
-/n Game Round 80 !
-(5, 0) is a ai miss!
-(1, 4) is a player hit!
-/n Game Round 81 !
-(9, 3) is a ai miss!
-(1, 9) is a player miss!
-/n Game Round 82 !
-(1, 9) is a ai miss!
-(9, 2) is a player miss!
-/n Game Round 83 !
-(2, 5) is a ai miss!
+Game Round 11 !
+(5, 7) is a player miss!
+(3, 8) is a ai miss!
+Game Round 12 !
+(9, 9) is a player miss!
+(7, 7) is a ai miss!
+Game Round 13 !
+(3, 4) is a player miss!
+(2, 4) is a ai miss!
+Game Round 14 !
+(7, 9) is a player miss!
+(1, 6) is a ai hit!
+Game Round 15 !
 (1, 7) is a player miss!
-/n Game Round 84 !
-(3, 6) is a ai miss!
-(1, 1) is a player miss!
-/n Game Round 85 !
-(4, 7) is a ai miss!
-(1, 6) is a player hit!
-/n Game Round 86 !
+(2, 9) is a ai miss!
+Game Round 16 !
+(4, 8) is a player miss!
+(3, 5) is a ai hit!
+Game Round 17 !
+(0, 4) is a player miss!
+(8, 7) is a ai miss!
+Game Round 18 !
+(2, 8) is a player miss!
+(1, 9) is a ai miss!
+Game Round 19 !
+(5, 5) is a player miss!
+(7, 9) is a ai miss!
+Game Round 20 !
+(3, 8) is a player miss!
+(8, 5) is a ai miss!
+Game Round 21 !
+(8, 8) is a player miss!
+(1, 3) is a ai miss!
+Game Round 22 !
+(9, 1) is a player miss!
+(7, 3) is a ai hit!
+Game Round 23 !
+(6, 7) is a player miss!
+(1, 1) is a ai miss!
+Game Round 24 !
+(7, 2) is a player hit!
+(5, 9) is a ai miss!
+Game Round 25 !
+(1, 8) is a player miss!
+(5, 7) is a ai miss!
+Game Round 26 !
+(4, 3) is a player hit!
+(0, 8) is a ai miss!
+Game Round 27 !
+(2, 5) is a player hit!
+(9, 6) is a ai miss!
+Game Round 28 !
+(6, 5) is a player miss!
+(6, 3) is a ai hit!
+Game Round 29 !
+(3, 0) is a player miss!
+(0, 9) is a ai miss!
+Game Round 30 !
+(9, 6) is a player miss!
+(2, 2) is a ai miss!
+Game Round 31 !
+(2, 7) is a player hit!
+(4, 3) is a ai miss!
+Game Round 32 !
+(9, 3) is a player miss!
+(3, 7) is a ai miss!
+Game Round 33 !
+(2, 4) is a player hit!
 (8, 8) is a ai miss!
-(8, 4) is a player hit!
-The winner is player
+Game Round 34 !
+(9, 2) is a player miss!
+(6, 1) is a ai miss!
+Game Round 35 !
+(3, 2) is a player miss!
+(1, 7) is a ai hit!
+Game Round 36 !
+(5, 3) is a player hit!
+(9, 2) is a ai miss!
+Game Round 37 !
+(9, 8) is a player miss!
+(8, 2) is a ai miss!
+Game Round 38 !
+(8, 1) is a player hit!
+(1, 8) is a ai hit!
+Game Round 39 !
+(3, 5) is a player miss!
+(0, 1) is a ai miss!
+Game Round 40 !
+(3, 3) is a player hit!
+(9, 1) is a ai miss!
+Game Round 41 !
+(2, 6) is a player hit!
+(1, 4) is a ai hit!
+Game Round 42 !
+(6, 2) is a player miss!
+(4, 8) is a ai miss!
+Game Round 43 !
+(7, 4) is a player miss!
+(4, 1) is a ai miss!
+Game Round 44 !
+(9, 7) is a player miss!
+(8, 9) is a ai miss!
+Game Round 45 !
+(1, 5) is a player miss!
+(9, 3) is a ai miss!
+Game Round 46 !
+(5, 6) is a player miss!
+(0, 5) is a ai miss!
+Game Round 47 !
+(4, 7) is a player miss!
+(4, 7) is a ai miss!
+Game Round 48 !
+(5, 1) is a player miss!
+(2, 6) is a ai miss!
+Game Round 49 !
+(1, 1) is a player miss!
+(5, 3) is a ai hit!
+Game Round 50 !
+(2, 1) is a player miss!
+(4, 4) is a ai miss!
+Game Round 51 !
+(4, 2) is a player miss!
+(7, 5) is a ai hit!
+Game Round 52 !
+(3, 1) is a player miss!
+(7, 8) is a ai miss!
+Game Round 53 !
+(4, 6) is a player miss!
+(4, 2) is a ai miss!
+Game Round 54 !
+(7, 3) is a player hit!
+(0, 0) is a ai miss!
+Game Round 55 !
+(5, 0) is a player miss!
+(2, 0) is a ai hit!
+Game Round 56 !
+(4, 9) is a player miss!
+(5, 2) is a ai miss!
+Game Round 57 !
+(4, 4) is a player miss!
+(7, 4) is a ai miss!
+Game Round 58 !
+(0, 8) is a player miss!
+(6, 9) is a ai miss!
+Game Round 59 !
+(0, 3) is a player miss!
+(5, 5) is a ai miss!
+Game Round 60 !
+(6, 8) is a player miss!
+(3, 3) is a ai hit!
+Game Round 61 !
+(4, 0) is a player miss!
+(3, 6) is a ai miss!
+Game Round 62 !
+(8, 3) is a player miss!
+(0, 7) is a ai miss!
+Game Round 63 !
+(2, 0) is a player hit!
+(5, 8) is a ai miss!
+Game Round 64 !
+(2, 3) is a player hit!
+(9, 7) is a ai miss!
+Game Round 65 !
+(5, 4) is a player miss!
+(5, 0) is a ai miss!
+Game Round 66 !
+(8, 7) is a player miss!
+(8, 6) is a ai miss!
+Game Round 67 !
+(7, 0) is a player miss!
+(0, 4) is a ai miss!
+Game Round 68 !
+(6, 0) is a player miss!
+(5, 1) is a ai miss!
+Game Round 69 !
+(8, 4) is a player miss!
+(3, 1) is a ai miss!
+Game Round 70 !
+(0, 6) is a player miss!
+(7, 2) is a ai miss!
+Game Round 71 !
+(4, 1) is a player miss!
+(1, 0) is a ai hit!
+Game Round 72 !
+(6, 1) is a player miss!
+(2, 1) is a ai miss!
+Game Round 73 !
+(1, 2) is a player miss!
+(6, 8) is a ai miss!
+Game Round 74 !
+(3, 9) is a player miss!
+(8, 0) is a ai miss!
+Game Round 75 !
+(7, 5) is a player miss!
+(1, 5) is a ai hit!
+Game Round 76 !
+(3, 6) is a player miss!
+(2, 7) is a ai miss!
+Game Round 77 !
+(9, 0) is a player miss!
+(6, 2) is a ai miss!
+Game Round 78 !
+(8, 0) is a player miss!
+(9, 4) is a ai miss!
+Game Round 79 !
+(0, 9) is a player miss!
+(3, 4) is a ai hit!
+Game Round 80 !
+(6, 6) is a player miss!
+(5, 4) is a ai miss!
+Game Round 81 !
+(0, 1) is a player miss!
+(5, 6) is a ai miss!
+Game Round 82 !
+(4, 5) is a player miss!
+(3, 0) is a ai hit!
+Game Round 83 !
+(8, 6) is a player miss!
+(2, 5) is a ai miss!
+Game Round 84 !
+(7, 7) is a player miss!
+(0, 6) is a ai miss!
+Game Round 85 !
+(1, 9) is a player miss!
+(9, 8) is a ai miss!
+Game Round 86 !
+(0, 5) is a player miss!
+(6, 0) is a ai miss!
+Game Round 87 !
+(8, 2) is a player hit!
+(1, 2) is a ai miss!
+Game Round 88 !
+(1, 3) is a player hit!
+(0, 2) is a ai miss!
+Game Round 89 !
+(0, 2) is a player miss!
+(4, 0) is a ai miss!
+Game Round 90 !
+(1, 4) is a player miss!
+(9, 0) is a ai miss!
+Game Round 91 !
+(5, 2) is a player miss!
+(4, 6) is a ai miss!
+Game Round 92 !
+(3, 7) is a player miss!
+(8, 4) is a ai miss!
+Game Round 93 !
+(0, 7) is a player miss!
+(4, 5) is a ai miss!
+Game Round 94 !
+(9, 4) is a player miss!
+(6, 5) is a ai hit!
+The winner is AI
 *********************** AI Map ********************
    0  1  2  3  4  5  6  7  8  9 
-0:|-||-||X||X||-||X||X||X||X||-|
-1:|X||X||X||X||X||X||X||X||X||X|
-2:|X||-||X||X||X||X||X||-||X||X|
-3:|-||X||-||X||X||X||X||X||-||X|
-4:|X||X||X||-||X||X||X||X||X||X|
-5:|X||X||X||X||X||X||X||X||X||X|
-6:|-||X||X||X||X||X||X||X||X||X|
-7:|X||X||-||X||X||X||-||X||X||X|
-8:|X||X||X||X||X||X||X||X||X||X|
-9:|X||X||X||X||X||X||X||X||X||-|
+0:|X||X||X||X||X||X||X||X||X||X|
+1:|r||X||X||X||X||X||X||X||X||X|
+2:|X||X||X||X||X||X||X||X||X||X|
+3:|X||X||X||X||X||X||X||X||X||X|
+4:|X||X||X||X||X||X||X||X||X||X|
+5:|X||X||X||X||X||X||X||X||-||-|
+6:|X||X||X||X||-||X||X||X||X||X|
+7:|X||X||X||X||X||X||X||X||-||X|
+8:|X||X||X||X||X||-||X||X||X||X|
+9:|X||X||X||X||X||X||X||X||X||X|
 
 **************************************************
 
 ************* Player Map *************************
    0  1  2  3  4  5  6  7  8  9 
-0:|X||X||X||X||X||X||-||X||X||X|
+0:|X||X||X||X||X||X||X||X||X||X|
 1:|X||X||X||X||X||X||X||X||X||X|
-2:|X||X||X||X||-||X||X||X||-||X|
-3:|X||-||X||X||X||X||X||-||X||X|
+2:|X||X||X||-||X||X||X||X||-||X|
+3:|X||X||X||X||X||X||X||X||X||X|
 4:|X||X||X||X||X||X||X||X||X||X|
-5:|X||X||X||X||X||X||X||-||X||X|
-6:|X||X||X||X||X||X||X||X||c||c|
-7:|X||-||X||-||X||X||X||X||X||X|
-8:|X||X||X||-||X||X||X||X||X||X|
-9:|X||-||-||X||X||X||-||X||X||X|
+5:|X||X||X||X||X||X||X||X||X||X|
+6:|X||X||X||X||-||X||-||X||X||X|
+7:|X||X||X||X||X||X||-||X||X||X|
+8:|X||X||X||X||X||X||X||X||X||X|
+9:|X||X||X||X||X||-||X||X||X||X|
 **************************************************
 *******Output information***********************
 *******Player Information***********************
-******Total shots: 86
-******Total hits: 17
-******Total miss: 69
-******Miss Ratio: 0.80
+******Total shots: 94
+******Total hits: 16
+******Total miss: 78
+******Miss Ratio: 0.83
 **************************************************
 
 *******AI Information***********************
-******Total shots: 86
-******Total hits: 15
-******Total miss: 71
-******Miss Ratio: 0.83
+******Total shots: 94
+******Total hits: 17
+******Total miss: 77
+******Miss Ratio: 0.82
 **************************************************
