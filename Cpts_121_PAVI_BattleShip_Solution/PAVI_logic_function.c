@@ -615,6 +615,14 @@ Battleship_Rect fnc_ai_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME
 	return rect_hit;	
 }
 
+void fnc_player_attack_cell(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_Rect rect_hit)
+{
+	cell[rect_hit.x][rect_hit.y].is_Hit = true;
+
+	//modify char as a * mark
+	cell[rect_hit.x][rect_hit.y].char_ship_type = '*';
+}
+
 void fnc_update_battleship_health(Battleship_Cell cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], int* array_health_player_battleship)
 {
 

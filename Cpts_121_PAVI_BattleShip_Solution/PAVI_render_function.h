@@ -1,5 +1,14 @@
 #include "PAVI_logic_function.h"
 
+typedef struct
+{
+	bool canPlaced;
+	Battleship_ShipType ship_type;
+	
+}Battleship_RenderPlaceCell;
+
+
+
 //init sdl window
 SDL_Window* fnc_sdl_create_window();
 
@@ -23,3 +32,9 @@ int fnc_sdl_render_main(void* battleship_shared_data);
 
 //mouse click checker
 bool fnc_check_mouse_click_event_checker(SDL_Rect rect_Play_button);
+
+//init & update render cell, if type = 0 is init
+void fnc_update_array_render_place_cell(Battleship_RenderPlaceCell array_render_place_cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_Cell array_player_map[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ShipType ship_type, Battleship_Direction ship_direction);
+
+//init player place cell rect
+void fnc_init_rect_array_render_place_cell(SDL_Rect rect_array_render_place_cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH]);

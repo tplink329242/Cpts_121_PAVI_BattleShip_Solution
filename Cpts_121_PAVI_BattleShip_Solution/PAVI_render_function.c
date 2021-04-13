@@ -66,6 +66,9 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 	fnc_sdl_init();
 	bool battleship_num_close_requested = FALSE;
 
+	//open a output file
+	FILE* outfile = fnc_open_file("output.dat", "w");
+
 	//shared mem
 	Battleship_ThreadParameter* parameter_thread_data = battleship_shared_data;
 
@@ -77,6 +80,18 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 
 	//game phase
 	Battleship_GamePhase game_phase = 0;
+
+	Battleship_PlayerType winner = player;
+
+	//game round
+	int game_round = 0;
+
+	//place ship array & direction
+	Battleship_ship array_player_place_ship[6];
+	Battleship_ShipType now_placing = SHIP_TYPE_CARRIER;
+	Battleship_Direction ship_direction = horizontal;
+	Battleship_RenderPlaceCell array_render_place_cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH];
+	
 	
 	//sdl const var
 	const Uint32 battleship_sdl_render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
@@ -113,19 +128,33 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 
 
 	//player place ship phase
+	//
+	//init ship environment
 	//place ship message
-	SDL_Rect rect_player_place_ship_text = { 60,40, 0, 0 };
+	SDL_Rect rect_player_place_ship_text = { 40,20, 0, 0 };
 	SDL_Texture* tex_player_place_ship_text = NULL;
 	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_player_place_ship_text, &tex_player_place_ship_text, "Please start to place your ship!");
+	fnc_update_array_render_place_cell(array_render_place_cell, NULL, SHIP_TYPE_INIT, ship_direction);
 
+	
+	//vertical horizontal message
+	SDL_Rect rect_player_place_ship_direction_vertical_text = { 40,60, 0, 0 };
+	SDL_Rect rect_player_place_ship_direction_horizontal_text = { 40,60, 0, 0 };
+	SDL_Texture* tex_player_place_ship_direction_vertical_text = NULL;
+	SDL_Texture* tex_player_place_ship_direction_horizontal_text = NULL;
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_Fuchsia, &rect_player_place_ship_direction_vertical_text, &tex_player_place_ship_direction_vertical_text, "Ship location: vertical");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_Fuchsia, &rect_player_place_ship_direction_horizontal_text, &tex_player_place_ship_direction_horizontal_text, "Ship location: horizontal");
 
+	//vertical horizontal variable
+	
+	
 	//ship type message and rect
-	//ship rect
-	SDL_Rect rect_player_place_ship_type_carrier_text = { 60,60, 0, 0 };
-	SDL_Rect rect_player_place_ship_type_battleship_text = { 60,60, 0, 0 };
-	SDL_Rect rect_player_place_ship_type_cruiser_text = { 60,60, 0, 0 };
-	SDL_Rect rect_player_place_ship_type_submarine_text = { 60,60, 0, 0 };
-	SDL_Rect rect_player_place_ship_type_destroyer_text = { 60,60, 0, 0 };
+	//ship text rect
+	SDL_Rect rect_player_place_ship_type_carrier_text = { 40,100, 0, 0 };
+	SDL_Rect rect_player_place_ship_type_battleship_text = { 40,100, 0, 0 };
+	SDL_Rect rect_player_place_ship_type_cruiser_text = { 40,100, 0, 0 };
+	SDL_Rect rect_player_place_ship_type_submarine_text = { 40,100, 0, 0 };
+	SDL_Rect rect_player_place_ship_type_destroyer_text = { 40,100, 0, 0 };
 
 	//ship type tex
 	SDL_Texture* tex_player_place_ship_type_carrier_text = NULL;
@@ -133,6 +162,26 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 	SDL_Texture* tex_player_place_ship_type_cruiser_text = NULL;
 	SDL_Texture* tex_player_place_ship_type_submarine_text = NULL;
 	SDL_Texture* tex_player_place_ship_type_destroyer_text = NULL;
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_player_place_ship_type_carrier_text, &tex_player_place_ship_type_carrier_text, "Now placing: Carrier");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_player_place_ship_type_battleship_text, &tex_player_place_ship_type_battleship_text, "Now placing: Battleship");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_player_place_ship_type_cruiser_text, &tex_player_place_ship_type_cruiser_text, "Now placing: Cruiser");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_player_place_ship_type_submarine_text, &tex_player_place_ship_type_submarine_text, "Now placing: Submarine");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_player_place_ship_type_destroyer_text, &tex_player_place_ship_type_destroyer_text, "Now placing: Destroyer");
+
+	//cell rect and tex
+	SDL_Rect rect_array_render_place_cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH];
+	fnc_init_rect_array_render_place_cell(rect_array_render_place_cell);
+
+	//ship tex
+	SDL_Texture* tex_player_place_ship_pic_carrier = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/carrier.jpg");
+	SDL_Texture* tex_player_place_ship_pic_battleship = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/battleship.jpeg");
+	SDL_Texture* tex_player_place_ship_pic_cruiser = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/cruiser.jpg");
+	SDL_Texture* tex_player_place_ship_pic_submarine = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/submarine.jpg");
+	SDL_Texture* tex_player_place_ship_pic_destroyer = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/destroyer.jpg");
+
+	//stop & sea placing tex
+	SDL_Texture* tex_player_place_ship_pic_stop = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/stop.PNG");
+	SDL_Texture* tex_player_place_ship_pic_sea = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/sea.jpg");
 	
 	//who go first var
 	SDL_Rect rect_who_go_fist_text = { 90,100, 0, 0 };
@@ -148,7 +197,51 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_who_go_fist_ai, &tex_who_go_fist_ai, "Oops, looks like AI have better lucky!");
 	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_who_go_fist_player, &tex_who_go_fist_player, "You got lucky and you go first!");
 
+
+	//ai & player shot elements
+
+	//new cell tex
+	SDL_Texture* tex_shot_boom_pic = fnc_sdl_create_pic_texture(battleship_renderer, "res/pic/boom.png");
+
+	//text tex and rect
+	SDL_Rect rect_shot_text_is_miss = { -150,500, 0, 0 };
+	SDL_Rect rect_shot_text_is_hit = { -150,500, 0, 0 };
 	
+	SDL_Texture* tex_shot_text_is_miss = NULL;
+	SDL_Texture* tex_shot_text_is_hit = NULL;
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_shot_text_is_miss, &tex_shot_text_is_miss, "Oops, this is a miss!");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_shot_text_is_hit, &tex_shot_text_is_hit, "Yes, hit!");
+
+	//is hit or miss flag
+	bool is_hit = false;
+	bool is_hide_map = false;
+
+	//hit rect
+	Battleship_Rect rect_hit;
+
+	//call once in 1 round
+	bool is_already_shot = false;
+	
+	//player & ai round title
+	SDL_Rect rect_shot_player_round_title  = { 90,80, 0, 0 };
+	SDL_Rect rect_shot_ai_round_title = { 90,80, 0, 0 };
+	SDL_Texture* tex_shot_player_round_title = NULL;
+	SDL_Texture* tex_shot_ai_round_title = NULL;
+	
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_shot_player_round_title, &tex_shot_player_round_title, "Now it is a player round!");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_shot_ai_round_title, &tex_shot_ai_round_title, "Now it is an AI round!");
+
+
+	//winner text and location
+	SDL_Rect rect_winner_player_round_title = { 90,80, 0, 0 };
+	SDL_Rect rect_winner_ai_round_title = { 90,80, 0, 0 };
+	SDL_Texture* tex_winner_player_round_title = NULL;
+	SDL_Texture* tex_winner_ai_round_title = NULL;
+
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_winner_player_round_title, &tex_winner_player_round_title, "The winner is player! Static already written to file!");
+	fnc_sdl_create_text_texture_and_location(battleship_renderer, font_medium, textColor_blue, &rect_winner_ai_round_title, &tex_winner_ai_round_title, "The winner is AI! Static already written to file!");
+
+
 
 	while (!battleship_num_close_requested)
 	{
@@ -198,15 +291,67 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 			break;
 			
 		case BS_GAME_PHASE_PLAYER_PLACE_SHIP:
+			SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			fnc_update_array_render_place_cell(array_render_place_cell, parameter_thread_data->cell_player, now_placing, ship_direction);
+			SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			
 			if (battleship_event.type == SDL_MOUSEBUTTONUP)
 			{
-				if (fnc_check_mouse_click_event_checker(rect_who_go_fist_dice))
+				//switch vertical or horizontal
+				if (ship_direction == vertical)
 				{
+					if (fnc_check_mouse_click_event_checker(rect_player_place_ship_direction_vertical_text))
+					{
+						ship_direction = horizontal;
+					}
 				}
+				else
+				{
+					if (fnc_check_mouse_click_event_checker(rect_player_place_ship_direction_horizontal_text))
+					{
+						ship_direction = vertical;
+					}
+				}
+
+				//apply player selected
+				for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+				{
+					for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+					{
+						if (array_render_place_cell[i][j].canPlaced == true)
+						{
+							if (fnc_check_mouse_click_event_checker(rect_array_render_place_cell[i][j]))
+							{
+								array_player_place_ship[now_placing].ship_type = now_placing;
+								array_player_place_ship[now_placing].direction = ship_direction;
+								array_player_place_ship[now_placing].array_ship_location.x = i;
+								array_player_place_ship[now_placing].array_ship_location.y = j;
+								SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+								fnc_update_cell_using_array_ship(parameter_thread_data->cell_player, array_player_place_ship[now_placing], now_placing);
+								SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+
+								//update render array
+								fnc_update_array_render_place_cell(array_render_place_cell, parameter_thread_data->cell_player, now_placing, ship_direction);
+								now_placing++;
+								if (now_placing == 6)
+								{
+									SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+
+									//switch game phase to the next round
+									parameter_thread_data->game_phase = BS_GAME_PHASE_DECIDE_WHO_GO_FIRST;
+							
+									fnc_ai_place_ship(parameter_thread_data->cell_ai);
+									mock_test_session_map(parameter_thread_data);
+									SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+								}
+								break;
+							}
+						}
+					}
+				}
+				
 			}
-
-			//switch game phase to the next round
-
+			
 			break;
 			
 		case BS_GAME_PHASE_DECIDE_WHO_GO_FIRST:
@@ -237,19 +382,184 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 			if (rect_who_go_fist_player.x >=900 || rect_who_go_fist_ai.x >= 900)
 			{
 				SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
-				parameter_thread_data->game_phase = BS_GAME_PHASE_PLAYER_PLACE_SHIP;
+
+				//print original map
+				fnc_output_session_map(parameter_thread_data, outfile);
+
+				if (who_go_first == player)
+				{
+					fprintf(outfile, "The first is player! \n");
+				}
+				else
+				{
+					fprintf(outfile, "The first is AI! \n");
+				}
+				
+				if (parameter_thread_data->who_go_first == player)
+				{
+					parameter_thread_data->game_phase = BS_GAME_PHASE_PLAYER_SHOT;
+				}
+				else
+				parameter_thread_data->game_phase = BS_GAME_PHASE_AI_SHOT;
+				
 				SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
 			}
 					
 			break;
+
+		case BS_GAME_PHASE_PLAYER_SHOT:
+
+			if (is_already_shot == false)
+			{
+				SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+				fnc_update_array_render_place_cell(array_render_place_cell, parameter_thread_data->cell_ai, now_placing, ship_direction);
+
+				
+
+				//apply a shot to ai map
+
+
+
+				
+				for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+				{
+					for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+					{
+						if (parameter_thread_data->cell_ai[i][j].is_Hit == false)
+						{
+							if (battleship_event.type == SDL_MOUSEBUTTONUP)
+							{
+								if (fnc_check_mouse_click_event_checker(rect_array_render_place_cell[i][j]))
+								{
+									//hit the ai target
+									rect_hit.x = i;
+									rect_hit.y = j;
+
+									//apply hit to ai map
+									fnc_player_attack_cell(parameter_thread_data->cell_ai, rect_hit);
+									is_hit = fnc_check_shot(parameter_thread_data->cell_ai, rect_hit);
+									fnc_update_battleship_health(parameter_thread_data->cell_ai, parameter_thread_data->array_health_ai_battleship);
+
+
+									//fprint game rect result
+									if (is_hit == true)
+									{
+										fprintf(outfile, "(%d, %d) is a player hit!\n", rect_hit.x, rect_hit.y);
+										parameter_thread_data->static_player.num_hit++;
+									}
+									else
+									{
+										fprintf(outfile, "(%d, %d) is a player miss!\n", rect_hit.x, rect_hit.y);
+										parameter_thread_data->static_player.num_miss++;
+									}
+
+									
+									if (parameter_thread_data->array_health_ai_battleship[0] == 1)
+									{
+										winner = player;
+										parameter_thread_data->game_phase = BS_GAME_PHASE_STATIC;
+									}
+
+									//plus game round
+									game_round++;
+									is_already_shot = true;
+								}
+							}
+						}
+					}
+				}
+				SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+	
+			}
+
+			if (is_already_shot == true)
+			{
+				rect_shot_text_is_miss.x += 5;
+				rect_shot_text_is_hit.x += 5;
+			}
+
 			
+			if (rect_shot_text_is_miss.x >= 1000 || rect_shot_text_is_hit.x >= 1000)
+			{
+				is_already_shot = false;
+
+				rect_shot_text_is_miss.x = -350;
+				rect_shot_text_is_hit.x = -350;
+
+				SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+				parameter_thread_data->game_phase = BS_GAME_PHASE_AI_SHOT;
+				SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			}
+
+			break;
+		case BS_GAME_PHASE_AI_SHOT:
+
+			if (is_already_shot == false)
+			{
+				SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+				fnc_update_array_render_place_cell(array_render_place_cell, parameter_thread_data->cell_player, now_placing, ship_direction);
+
+				//hit the player target
+				rect_hit = fnc_ai_attack_cell(parameter_thread_data->cell_player);
+				is_hit = fnc_check_shot(parameter_thread_data->cell_player, rect_hit);
+				fnc_update_battleship_health(parameter_thread_data->cell_player, parameter_thread_data->array_health_player_battleship);
+
+
+				//fprint game rect result
+				if (is_hit == true)
+				{
+					fprintf(outfile, "(%d, %d) is a ai hit!\n", rect_hit.x, rect_hit.y);
+					parameter_thread_data->static_ai.num_hit++;
+				}
+				else
+				{
+					fprintf(outfile, "(%d, %d) is a ai miss!\n", rect_hit.x, rect_hit.y);
+					parameter_thread_data->static_ai.num_miss++;
+				}
+				
+
+				if (parameter_thread_data->array_health_player_battleship[0] == 1)
+				{
+					winner = ai;
+					parameter_thread_data->game_phase = BS_GAME_PHASE_STATIC;
+				}
+				
+				SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+
+				
 		
+				//plus game round
+				game_round++;
+				is_already_shot = true;
+			}
+
+			rect_shot_text_is_miss.x += 5;
+			rect_shot_text_is_hit.x += 5;
+
+			if (rect_shot_text_is_miss.x >= 1000 || rect_shot_text_is_hit.x >= 1000)
+			{
+				is_already_shot = false;
+
+				rect_shot_text_is_miss.x = -150;
+				rect_shot_text_is_hit.x = -150;
+				
+				SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+				parameter_thread_data->game_phase = BS_GAME_PHASE_PLAYER_SHOT;
+				SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			}
+
+						
+			break;
+
+
+		case BS_GAME_PHASE_STATIC:
+			break;
+
 
 		default:;
 		}
 
 		
-
 		//game phase render copy
 		switch (game_phase)
 		{
@@ -259,7 +569,81 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 			break;
 			
 		case BS_GAME_PHASE_PLAYER_PLACE_SHIP:
-			SDL_RenderCopy(battleship_renderer, tex_player_place_ship_text, NULL, &rect_player_place_ship_text);
+			SDL_RenderCopy(battleship_renderer, tex_player_place_ship_text, NULL, &rect_player_place_ship_text);			
+
+			//copy ship direction
+			if (ship_direction == vertical)
+			{
+				SDL_RenderCopy(battleship_renderer, tex_player_place_ship_direction_vertical_text, NULL, &rect_player_place_ship_direction_vertical_text);
+			}
+			if (ship_direction == horizontal)
+			{
+				SDL_RenderCopy(battleship_renderer, tex_player_place_ship_direction_horizontal_text, NULL, &rect_player_place_ship_direction_horizontal_text);
+			}
+
+			//copy now placing text
+			switch (now_placing)
+			{
+			case SHIP_TYPE_CARRIER:
+				SDL_RenderCopy(battleship_renderer, tex_player_place_ship_type_carrier_text, NULL, &rect_player_place_ship_type_carrier_text);
+				break;
+			case SHIP_TYPE_BATTLESHIP:
+				SDL_RenderCopy(battleship_renderer, tex_player_place_ship_type_battleship_text, NULL, &rect_player_place_ship_type_battleship_text);
+				break;
+			case SHIP_TYPE_CRUISER:
+				SDL_RenderCopy(battleship_renderer, tex_player_place_ship_type_cruiser_text, NULL, &rect_player_place_ship_type_cruiser_text);
+				break;
+			case SHIP_TYPE_SUBMARINE:
+				SDL_RenderCopy(battleship_renderer, tex_player_place_ship_type_submarine_text, NULL, &rect_player_place_ship_type_submarine_text);
+				break;
+			case SHIP_TYPE_DESTROYER:
+				SDL_RenderCopy(battleship_renderer, tex_player_place_ship_type_destroyer_text, NULL, &rect_player_place_ship_type_destroyer_text);
+				break;
+			default:;
+			}
+			
+			
+			//copy cell
+			for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+			{
+				for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+				{
+					if (array_render_place_cell[i][j].ship_type == SHIP_TYPE_INIT)
+					{
+						if (array_render_place_cell[i][j].canPlaced == false)
+						{
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_stop, NULL, &rect_array_render_place_cell[i][j]);
+						}
+						else
+						{
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_sea, NULL, &rect_array_render_place_cell[i][j]);
+						}
+					}
+					else
+					{
+						switch (array_render_place_cell[i][j].ship_type)
+						{
+						case SHIP_TYPE_CARRIER:
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_carrier, NULL, &rect_array_render_place_cell[i][j]);
+							break;
+						case SHIP_TYPE_BATTLESHIP:
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_battleship, NULL, &rect_array_render_place_cell[i][j]);
+							break;
+						case SHIP_TYPE_CRUISER:
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_cruiser, NULL, &rect_array_render_place_cell[i][j]);
+							break;
+						case SHIP_TYPE_SUBMARINE:
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_submarine, NULL, &rect_array_render_place_cell[i][j]);
+							break;
+						case SHIP_TYPE_DESTROYER:
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_destroyer, NULL, &rect_array_render_place_cell[i][j]);
+							break;
+						default:;
+						}
+					}
+				
+				}
+			}			
 			break;
 			
 		case BS_GAME_PHASE_DECIDE_WHO_GO_FIRST:
@@ -274,7 +658,193 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 				SDL_RenderCopy(battleship_renderer, tex_who_go_fist_ai, NULL, &rect_who_go_fist_ai);
 			}		
 			break;
+
+		case BS_GAME_PHASE_PLAYER_SHOT:
+
+			//enalbe the hide map
+			is_hide_map = true;
+
+			//display the title
+			SDL_RenderCopy(battleship_renderer, tex_shot_player_round_title, NULL, &rect_shot_player_round_title);
+
+			SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+
+			//copy cell with hit update
+			for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+			{
+				for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+				{
+					if (parameter_thread_data->cell_ai[i][j].is_Hit == true)
+					{
+						SDL_RenderCopy(battleship_renderer, tex_shot_boom_pic, NULL, &rect_array_render_place_cell[i][j]);
+					}
+
+					else if (is_hide_map == true)
+					{
+						SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_sea, NULL, &rect_array_render_place_cell[i][j]);
+					}
+					else
+					{
+						if (parameter_thread_data->cell_ai[i][j].ship_type == SHIP_TYPE_INIT)
+						{
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_sea, NULL, &rect_array_render_place_cell[i][j]);
+						}
+						else
+						{
+							switch (parameter_thread_data->cell_ai[i][j].ship_type)
+							{
+							case SHIP_TYPE_CARRIER:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_carrier, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_BATTLESHIP:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_battleship, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_CRUISER:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_cruiser, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_SUBMARINE:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_submarine, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_DESTROYER:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_destroyer, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							default:;
+							}
+						}
+					}
+				}
+			}
+			SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
 			
+			//copy hit or miss text
+
+			if (is_already_shot == true)
+			{
+				if (is_hit == false)
+				{
+					SDL_RenderCopy(battleship_renderer, tex_shot_text_is_miss, NULL, &rect_shot_text_is_miss);
+				}
+				else
+				{
+					SDL_RenderCopy(battleship_renderer, tex_shot_text_is_hit, NULL, &rect_shot_text_is_hit);
+				}
+			}
+
+			break;
+
+		case BS_GAME_PHASE_AI_SHOT:
+
+			//disable the hide map
+			is_hide_map = false;
+
+			//display the title
+			SDL_RenderCopy(battleship_renderer, tex_shot_ai_round_title, NULL, &rect_shot_ai_round_title);
+
+			SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+				
+			//copy cell with hit update
+			for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+			{
+				for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+				{
+					if (parameter_thread_data->cell_player[i][j].is_Hit == true)
+					{
+						SDL_RenderCopy(battleship_renderer, tex_shot_boom_pic, NULL, &rect_array_render_place_cell[i][j]);
+					}
+
+					else if (is_hide_map == true)
+					{
+						SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_sea, NULL, &rect_array_render_place_cell[i][j]);
+					}
+					else
+					{
+						if (parameter_thread_data->cell_player[i][j].ship_type == SHIP_TYPE_INIT)
+						{
+							SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_sea, NULL, &rect_array_render_place_cell[i][j]);
+						}
+						else
+						{
+							switch (parameter_thread_data->cell_player[i][j].ship_type)
+							{
+							case SHIP_TYPE_CARRIER:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_carrier, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_BATTLESHIP:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_battleship, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_CRUISER:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_cruiser, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_SUBMARINE:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_submarine, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							case SHIP_TYPE_DESTROYER:
+								SDL_RenderCopy(battleship_renderer, tex_player_place_ship_pic_destroyer, NULL, &rect_array_render_place_cell[i][j]);
+								break;
+							default:;
+							}
+						}
+					}
+				}
+			}
+			SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			//copy hit or miss text
+			if (is_hit == false)
+			{
+				SDL_RenderCopy(battleship_renderer, tex_shot_text_is_miss, NULL, &rect_shot_text_is_miss);
+			}
+			else
+			{
+				SDL_RenderCopy(battleship_renderer, tex_shot_text_is_hit, NULL, &rect_shot_text_is_hit);
+			}
+
+			break;
+
+		case BS_GAME_PHASE_STATIC:
+
+			if (winner == player)
+			{
+				SDL_RenderCopy(battleship_renderer, tex_winner_player_round_title, NULL, &rect_winner_player_round_title);
+
+				fprintf(outfile, "The winner is player\n");
+				
+			}
+			else
+			{
+				SDL_RenderCopy(battleship_renderer, tex_winner_ai_round_title, NULL, &rect_winner_ai_round_title);
+
+				fprintf(outfile, "The winner is AI\n");
+				
+			}
+
+			//total static update
+			SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			parameter_thread_data->game_phase = BS_GAME_PHASE_PLAYER_SHOT;
+			SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			
+			parameter_thread_data->static_player.num_total_shots = parameter_thread_data->static_player.num_miss + parameter_thread_data->static_player.num_hit;
+			parameter_thread_data->static_player.ratio_miss = parameter_thread_data->static_player.num_miss / (double)parameter_thread_data->static_player.num_total_shots;
+
+			parameter_thread_data->static_ai.num_total_shots = parameter_thread_data->static_ai.num_miss + parameter_thread_data->static_ai.num_hit;
+			parameter_thread_data->static_ai.ratio_miss = parameter_thread_data->static_ai.num_miss / (double)parameter_thread_data->static_ai.num_total_shots;
+
+			mock_test_session_map(parameter_thread_data);
+			
+			//print final map
+			fnc_output_session_map(parameter_thread_data, outfile);
+			fnc_output_players_static(parameter_thread_data, outfile);
+
+			
+			fclose(outfile);
+			SDL_Delay(5000);
+			
+
+			SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
+			parameter_thread_data->battleship_num_close_requested = true;
+			SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
+
+			break;
+				
 		default:;
 		}
 		
@@ -286,7 +856,8 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 		{
 		case BS_GAME_PHASE_MAIN_MENU:
 			break;
-		case BS_GAME_PHASE_DECIDE_WHO_GO_FIRST:
+		case BS_GAME_PHASE_PLAYER_PLACE_SHIP:
+
 			break;
 		default:;
 		}
@@ -332,5 +903,411 @@ bool fnc_check_mouse_click_event_checker(SDL_Rect rect_Play_button)
 		}
 	}
 	return false;
+}
+
+void fnc_update_array_render_place_cell(Battleship_RenderPlaceCell array_render_place_cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_Cell array_player_map[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH], Battleship_ShipType ship_type, Battleship_Direction ship_direction)
+{
+	int max_x = 0;
+	int max_y = 0;
+
+	
+	if (ship_type == SHIP_TYPE_INIT)
+	{
+		for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+		{
+			for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+			{
+				array_render_place_cell[i][j].ship_type = SHIP_TYPE_INIT;
+				array_render_place_cell[i][j].canPlaced = true;
+			}
+		}
+	}
+	else
+	{
+		//get max length
+		if (ship_direction == horizontal)
+		{
+			max_x = 10;
+			switch (ship_type)
+			{
+			case SHIP_TYPE_CARRIER:
+				max_y = 11 - GAME_BATTLESHIP_HEALTH_CARRIER;
+				break;
+			case SHIP_TYPE_BATTLESHIP:
+				max_y = 11 - GAME_BATTLESHIP_HEALTH_BATTLESHIP;
+				break;
+			case SHIP_TYPE_CRUISER:
+				max_y = 11 - GAME_BATTLESHIP_HEALTH_CRUISER;
+				break;
+			case SHIP_TYPE_SUBMARINE:
+				max_y = 11 - GAME_BATTLESHIP_HEALTH_SUBMARINE;
+				break;
+			case SHIP_TYPE_DESTROYER:
+				max_y = 11 - GAME_BATTLESHIP_HEALTH_DESTROYER;
+				break;
+			default:;
+			}
+		}
+		else
+		{
+			max_y = 10;
+			switch (ship_type)
+			{
+			case SHIP_TYPE_CARRIER:
+				max_x = 11 - GAME_BATTLESHIP_HEALTH_CARRIER;
+				break;
+			case SHIP_TYPE_BATTLESHIP:
+				max_x = 11 - GAME_BATTLESHIP_HEALTH_BATTLESHIP;
+				break;
+			case SHIP_TYPE_CRUISER:
+				max_x = 11 - GAME_BATTLESHIP_HEALTH_CRUISER;
+				break;
+			case SHIP_TYPE_SUBMARINE:
+				max_x = 11 - GAME_BATTLESHIP_HEALTH_SUBMARINE;
+				break;
+			case SHIP_TYPE_DESTROYER:
+				max_x = 11 - GAME_BATTLESHIP_HEALTH_DESTROYER;
+				break;
+			default:;
+			}
+		}
+
+		//get available slot
+		switch (ship_type)
+		{
+		case SHIP_TYPE_CARRIER:
+			for (int i = 0; i < max_x; ++i)
+			{
+				for (int j = 0; j < max_y; ++j)
+				{
+					array_render_place_cell[i][j].ship_type = array_player_map[i][j].ship_type;
+					if (array_render_place_cell[i][j].ship_type != SHIP_TYPE_INIT)
+					{
+						array_render_place_cell[i][j].canPlaced = false;
+					}
+					else
+					{
+						array_render_place_cell[i][j].canPlaced = true;
+						if (ship_direction == horizontal)
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_CARRIER; ++k)
+							{
+								if (array_player_map[i][j + k].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+						else
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_CARRIER; ++k)
+							{
+								if (array_player_map[i + k][j].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+					}				
+				}
+			}
+
+			//full fill the rest of slot
+			if (ship_direction == horizontal)
+			{
+				for (int i = 0; i < 10; ++i)
+				{
+					for (int j = 0; j < GAME_BATTLESHIP_HEALTH_CARRIER - 1; ++j)
+					{
+						array_render_place_cell[i][6 + j].canPlaced = false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_CARRIER; ++i)
+				{
+					for (int j = 0; j < 10; ++j)
+					{
+						array_render_place_cell[6 + i][j].canPlaced = false;
+					}
+				}				
+			}		
+			break;
+			
+		case SHIP_TYPE_BATTLESHIP:
+			for (int i = 0; i < max_x; ++i)
+			{
+				for (int j = 0; j < max_y; ++j)
+				{
+					array_render_place_cell[i][j].ship_type = array_player_map[i][j].ship_type;
+					if (array_render_place_cell[i][j].ship_type != SHIP_TYPE_INIT)
+					{
+						array_render_place_cell[i][j].canPlaced = false;
+					}
+					else
+					{
+						array_render_place_cell[i][j].canPlaced = true;
+						if (ship_direction == horizontal)
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_BATTLESHIP; ++k)
+							{
+								if (array_player_map[i][j + k].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+						else
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_BATTLESHIP; ++k)
+							{
+								if (array_player_map[i + k][j].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//full fill the rest of slot
+			if (ship_direction == horizontal)
+			{
+				for (int i = 0; i < 10; ++i)
+				{
+					for (int j = 0; j < GAME_BATTLESHIP_HEALTH_BATTLESHIP - 1; ++j)
+					{
+						array_render_place_cell[i][7 + j].canPlaced = false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_BATTLESHIP; ++i)
+				{
+					for (int j = 0; j < 10; ++j)
+					{
+						array_render_place_cell[7 + i][j].canPlaced = false;
+					}
+				}
+			}
+			break;
+			
+		case SHIP_TYPE_CRUISER:
+			for (int i = 0; i < max_x; ++i)
+			{
+				for (int j = 0; j < max_y; ++j)
+				{
+					array_render_place_cell[i][j].ship_type = array_player_map[i][j].ship_type;
+					if (array_render_place_cell[i][j].ship_type != SHIP_TYPE_INIT)
+					{
+						array_render_place_cell[i][j].canPlaced = false;
+					}
+					else
+					{
+						array_render_place_cell[i][j].canPlaced = true;
+						if (ship_direction == horizontal)
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_CRUISER; ++k)
+							{
+								if (array_player_map[i][j + k].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+						else
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_CRUISER; ++k)
+							{
+								if (array_player_map[i + k][j].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//full fill the rest of slot
+			if (ship_direction == horizontal)
+			{
+				for (int i = 0; i < 10; ++i)
+				{
+					for (int j = 0; j < GAME_BATTLESHIP_HEALTH_CRUISER - 1; ++j)
+					{
+						array_render_place_cell[i][8 + j].canPlaced = false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_CRUISER; ++i)
+				{
+					for (int j = 0; j < 10; ++j)
+					{
+						array_render_place_cell[8 + i][j].canPlaced = false;
+					}
+				}
+			}
+			break;
+			
+		case SHIP_TYPE_SUBMARINE:
+			for (int i = 0; i < max_x; ++i)
+			{
+				for (int j = 0; j < max_y; ++j)
+				{
+					array_render_place_cell[i][j].ship_type = array_player_map[i][j].ship_type;
+					if (array_render_place_cell[i][j].ship_type != SHIP_TYPE_INIT)
+					{
+						array_render_place_cell[i][j].canPlaced = false;
+					}
+					else
+					{
+						array_render_place_cell[i][j].canPlaced = true;
+						if (ship_direction == horizontal)
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_SUBMARINE; ++k)
+							{
+								if (array_player_map[i][j + k].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+						else
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_SUBMARINE; ++k)
+							{
+								if (array_player_map[i + k][j].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//full fill the rest of slot
+			if (ship_direction == horizontal)
+			{
+				for (int i = 0; i < 10; ++i)
+				{
+					for (int j = 0; j < GAME_BATTLESHIP_HEALTH_SUBMARINE - 1; ++j)
+					{
+						array_render_place_cell[i][8 + j].canPlaced = false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_SUBMARINE; ++i)
+				{
+					for (int j = 0; j < 10; ++j)
+					{
+						array_render_place_cell[8 + i][j].canPlaced = false;
+					}
+				}
+			}
+			break;
+
+		case SHIP_TYPE_DESTROYER:
+			for (int i = 0; i < max_x; ++i)
+			{
+				for (int j = 0; j < max_y; ++j)
+				{
+					array_render_place_cell[i][j].ship_type = array_player_map[i][j].ship_type;
+					if (array_render_place_cell[i][j].ship_type != SHIP_TYPE_INIT)
+					{
+						array_render_place_cell[i][j].canPlaced = false;
+					}
+					else
+					{
+						array_render_place_cell[i][j].canPlaced = true;
+						if (ship_direction == horizontal)
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_DESTROYER; ++k)
+							{
+								if (array_player_map[i][j + k].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+						else
+						{
+							for (int k = 0; k < GAME_BATTLESHIP_HEALTH_DESTROYER; ++k)
+							{
+								if (array_player_map[i + k][j].is_ship_placed == true)
+								{
+									array_render_place_cell[i][j].canPlaced = false;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//full fill the rest of slot
+			if (ship_direction == horizontal)
+			{
+				for (int i = 0; i < 10; ++i)
+				{
+					for (int j = 0; j < GAME_BATTLESHIP_HEALTH_DESTROYER - 1; ++j)
+					{
+						array_render_place_cell[i][9 + j].canPlaced = false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < GAME_BATTLESHIP_HEALTH_DESTROYER; ++i)
+				{
+					for (int j = 0; j < 10; ++j)
+					{
+						array_render_place_cell[9 + i][j].canPlaced = false;
+					}
+				}
+			}
+			break;
+			
+		default:;
+		}
+	}
+}
+
+void fnc_init_rect_array_render_place_cell(SDL_Rect rect_array_render_place_cell[GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH][GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH])
+{
+	int init_x = 140;
+	int init_y = 150;
+	const int init_w = 50;
+	const int init_h = 50;
+	for (int i = 0; i < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++i)
+	{
+		for (int j = 0; j < GAME_BATTLESHIP_MAX_GAME_MAP_LENGTH; ++j)
+		{
+			init_x += 60;
+			rect_array_render_place_cell[i][j].x = init_x;
+			rect_array_render_place_cell[i][j].y = init_y;
+			rect_array_render_place_cell[i][j].w = init_w;
+			rect_array_render_place_cell[i][j].h = init_h;
+		}
+		init_x = 140;
+		init_y += 60;
+	}
 }
 
