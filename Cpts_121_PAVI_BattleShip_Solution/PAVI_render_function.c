@@ -61,7 +61,9 @@ void fnc_sdl_create_text_texture_and_location(SDL_Renderer* battleship_main_wind
 
 int fnc_sdl_render_main(void* battleship_shared_data)
 {
-
+	//seeds
+	srand((unsigned)time(NULL));
+	
 	//init render environment
 	fnc_sdl_init();
 	bool battleship_num_close_requested = FALSE;
@@ -85,6 +87,16 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 
 	//game round
 	int game_round = 0;
+
+	//ai & player ship health
+	int array_ship_ai_health[6][2] = { 0 };
+	int array_ship_player_health[6][2] = { 0 };
+
+
+	//ship string name
+	char array_ship_name[6][10] = {"init", "Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer"  };
+	
+	
 
 	//place ship array & direction
 	Battleship_ship array_player_place_ship[6];
@@ -256,6 +268,13 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 		SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
 		battleship_num_close_requested = parameter_thread_data->battleship_num_close_requested;
 		game_phase = parameter_thread_data->game_phase;
+
+		for (int i = 1; i < 6; ++i)
+		{
+			array_ship_ai_health[i][0] = parameter_thread_data->array_health_ai_battleship[i];
+			array_ship_player_health[i][0] = parameter_thread_data->array_health_player_battleship[i];
+		}
+		
 		SDL_UnlockMutex(parameter_thread_data->battleship_thd_bufferLock);
 
 		//reset sdl event states;
@@ -409,13 +428,24 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 
 		case BS_GAME_PHASE_PLAYER_SHOT:
 
+			for (int count = 1; count < 6; ++count)
+			{
+				if (array_ship_ai_health[count][1] == 0)
+				{
+					if (array_ship_ai_health[count][0] == 0)
+					{
+						fprintf(outfile, "The AI ship: %s has sunk\n", array_ship_name[count]);
+						printf_s("The AI ship: %s has sunk\n", array_ship_name[count]);
+						array_ship_ai_health[count][1] = 1;
+					}
+				}
+			}
+
 			if (is_already_shot == false)
 			{
 				SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
 				fnc_update_array_render_place_cell(array_render_place_cell, parameter_thread_data->cell_ai, now_placing, ship_direction);
-
 				
-
 				//apply a shot to ai map
 
 
@@ -445,7 +475,7 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 									if (is_hit == true)
 									{
 										fprintf(outfile, "(%d, %d) is a player hit!\n", rect_hit.x, rect_hit.y);
-										parameter_thread_data->static_player.num_hit++;
+										parameter_thread_data->static_player.num_hit++;								
 									}
 									else
 									{
@@ -453,6 +483,9 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 										parameter_thread_data->static_player.num_miss++;
 									}
 
+									
+
+									
 									
 									if (parameter_thread_data->array_health_ai_battleship[0] == 1)
 									{
@@ -494,6 +527,20 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 			break;
 		case BS_GAME_PHASE_AI_SHOT:
 
+			for (int count = 1; count < 6; ++count)
+			{
+				if (array_ship_player_health[count][1] == 0)
+				{
+					if (array_ship_player_health[count][0] == 0)
+					{
+						fprintf(outfile, "The Player ship: %s has sunk\n", array_ship_name[count]);
+						printf_s("The Player ship: %s has sunk\n", array_ship_name[count]);
+						array_ship_player_health[count][1] = 1;
+					}
+				}
+			}
+
+
 			if (is_already_shot == false)
 			{
 				SDL_LockMutex(parameter_thread_data->battleship_thd_bufferLock);
@@ -516,7 +563,8 @@ int fnc_sdl_render_main(void* battleship_shared_data)
 					fprintf(outfile, "(%d, %d) is a ai miss!\n", rect_hit.x, rect_hit.y);
 					parameter_thread_data->static_ai.num_miss++;
 				}
-				
+
+
 
 				if (parameter_thread_data->array_health_player_battleship[0] == 1)
 				{
